@@ -95,10 +95,10 @@ export default {
       nicknamePlaceholder: '请输入名称',
       register: '创建账户',
       continue: '继续',
-      title: 'A leading RAG engine for LLM context',
+      title: '让企业知识真正服务于每一次决策',
       start: '立即开始',
       description:
-        '免费注册以探索顶级 RAG 技术。 创建知识库和人工智能来增强您的业务',
+        '使用 Agentos-RAG 统一管理企业文档，构建可检索、可追溯的知识库与智能问答应用。',
       review: '来自 500 多条评论',
     },
     header: {
@@ -445,7 +445,7 @@ export default {
       testSetting: '测试设置',
       retrievalTesting: '知识检索测试',
       retrievalTestingDescription:
-        '进行检索测试，检查 RAGFlow 是否能够为大语言模型（LLM）恢复预期的内容。',
+        '进行检索测试，检查 Agentos-RAG 是否能够为大语言模型（LLM）恢复预期的内容。',
       Parse: '解析',
       dataset: '知识库',
       testing: '检索测试',
@@ -534,7 +534,7 @@ export default {
       close: '关闭',
       rerankModel: 'Rerank 模型',
       rerankPlaceholder: '请选择',
-      rerankTip: `非必选项：若不选择 Rerank 模型，系统将默认采用关键词相似度与向量余弦相似度相结合的混合查询方式；如果设置了 Rerank 模型，则混合查询中的向量相似度部分将被 Rerank 打分替代。请注意：采用 Rerank 模型会非常耗时。如需选用 Rerank 模型，建议使用 SaaS 的 Rerank 模型服务；如果你倾向使用本地部署的 Rerank 模型，请务必确保你使用 docker-compose-gpu.yml 启动 RAGFlow。`,
+      rerankTip: `非必选项：若不选择 Rerank 模型，系统将默认采用关键词相似度与向量余弦相似度相结合的混合查询方式；如果设置了 Rerank 模型，则混合查询中的向量相似度部分将被 Rerank 打分替代。请注意：采用 Rerank 模型会非常耗时。如需选用 Rerank 模型，建议使用 SaaS 的 Rerank 模型服务；如果你倾向使用本地部署的 Rerank 模型，请务必确保你使用 docker-compose-gpu.yml 启动 Agentos-RAG。`,
       topK: 'Top-K',
       topKTip: `与 Rerank 模型配合使用，用于设置传给 Rerank 模型的文本块数量。`,
       delimiter: `文本分段标识符`,
@@ -750,7 +750,7 @@ export default {
       简历有多种格式，就像一个人的个性一样，但我们经常必须将它们组织成结构化数据，以便于搜索。
       </p><p>
       我们不是将简历分块，而是将简历解析为结构化数据。 作为 HR，你可以扔掉所有的简历，
-      您只需与<i>'RAGFlow'</i>交谈即可列出所有符合资格的候选人。
+      您只需与<i>'Agentos-RAG'</i>交谈即可列出所有符合资格的候选人。
       </p>
         `,
       table: `支持<p><b>XLSX</b>和<b>CSV/TXT</b>格式文件。</p><p>
@@ -1286,8 +1286,8 @@ NER：使用 spaCy NER 和基于规则的关键词提取来抽取 Entities 和 R
       sitemapFollowPdfLinksTip: '同时索引已抓取 HTML 页面中链接的 PDF 文件。',
       sitemapRestrictPdfToDomainTip: '仅跟随与 sitemap 同域名下的 PDF 链接。',
       sitemapUserAgentTip:
-        '每次请求发送的 User-Agent 请求头。留空则使用 RAGFlow-SitemapConnector/1.0。',
-      sitemapBatchSizeTip: '每批抓取并发送到 RAGFlow 的页面数量。',
+        '每次请求发送的 User-Agent 请求头。留空则使用 Agentos-RAG-SitemapConnector/1.0。',
+      sitemapBatchSizeTip: '每批抓取并发送到 Agentos-RAG 的页面数量。',
       azure_devopsDescription: '连接 Azure DevOps 以同步仓库文件和拉取请求。',
       bitbucketDescription: '连接 Bitbucket，同步 PR 内容。',
       bitbucketTopWorkspaceTip:
@@ -1728,7 +1728,7 @@ NER：使用 spaCy NER 和基于规则的关键词提取来抽取 Entities 和 R
         '默认的tts模型会被用于在对话过程中请求语音生成时使用。如未显示可选模型，请根据 https://ragflow.io/docs/dev/supported_models 确认你的模型供应商是否提供该模型。',
       embeddingModel: 'Embedding',
       embeddingModelTip:
-        '所有新创建的知识库使用的默认 Embedding 模型。如未显示可选模型，请检查你是否在使用 RAGFlow slim 版(不含 Embedding 模型)；或根据 https://ragflow.io/docs/dev/supported_models 确认你的模型供应商是否提供该模型。',
+        '所有新创建的知识库使用的默认 Embedding 模型。如未显示可选模型，请检查你是否在使用 Agentos-RAG slim 版(不含 Embedding 模型)；或根据 https://ragflow.io/docs/dev/supported_models 确认你的模型供应商是否提供该模型。',
       img2txtModel: 'VLM',
       img2txtModelTip:
         '所有新创建的知识库都将使用默认的 VLM 模型。 它可以描述图片或视频。如未显示可选模型，请根据 https://ragflow.io/docs/dev/supported_models 确认你的模型供应商是否提供该模型。',

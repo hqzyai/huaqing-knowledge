@@ -40,7 +40,7 @@ import { ISearchReturnProps } from './hooks';
 import './index.less';
 import MarkdownContent from './markdown-content';
 import MindMapSheet from './mindmap-sheet';
-import { RAGFlowLogo } from './ragflow-logo';
+import { ProductLogo } from './product-logo';
 import RetrievalDocuments from './retrieval-documents';
 import { sanitizeHtmlWithImagesAsText } from '@/utils/dom-util';
 import classNames from 'classnames';
@@ -109,12 +109,12 @@ export default function SearchingView({
           'relative z-10 px-8 pt-8 flex  text-transparent justify-start items-start w-full h-full',
         )}
       >
-        <RAGFlowLogo
+        <ProductLogo
           onClick={() => {
             setIsSearching?.(false);
           }}
           showEmbedIcon={showEmbedLogo}
-        ></RAGFlowLogo>
+        />
         <div
           className={cn(
             ' rounded-lg text-primary text-xl sticky flex flex-col justify-center  transform scale-100 ml-16 h-full flex-1 3xl:w-2/3 3xl:flex-none',

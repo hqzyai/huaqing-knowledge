@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "private": true,
-  "description": "RAGFlow Web Frontend migrated to Vite",
+  "description": "Agentos-RAG enterprise knowledge retrieval frontend",
   "author": "bill",
   "type": "module",
   "scripts": {

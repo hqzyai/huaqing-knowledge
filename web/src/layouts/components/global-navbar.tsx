@@ -267,7 +267,16 @@ export function MobileNavbar({ renderFooter }: MobileNavbarProps) {
         className="flex w-[min(85vw,18rem)] flex-col gap-0 p-0 sm:w-72"
       >
         <div className="flex shrink-0 justify-center py-5">
-          <img src="/logo.svg" alt="RAGFlow logo" className="size-9" />
+          <div className="flex items-center gap-2">
+            <img
+              src="/logo.svg"
+              alt="Agentos-RAG logo"
+              className="size-9 object-contain"
+            />
+            <span className="text-base font-semibold text-text-primary">
+              Agentos-RAG
+            </span>
+          </div>
         </div>
 
         <nav className="min-h-0 flex-1 overflow-y-auto py-3">

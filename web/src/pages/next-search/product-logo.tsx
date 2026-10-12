@@ -56,7 +56,7 @@ function EmbedIcon() {
   );
 }
 
-export function RAGFlowLogo({
+export function ProductLogo({
   onClick,
   showEmbedIcon = true,
 }: {
@@ -67,11 +67,15 @@ export function RAGFlowLogo({
     <div className="flex gap-4 items-center">
       <h1
         onClick={onClick}
-        className={cn(
-          'text-4xl font-bold bg-gradient-to-l from-[#40EBE3] to-[#4A51FF] bg-clip-text',
-        )}
+        className={cn('flex cursor-pointer items-center gap-3 text-4xl font-bold')}
       >
-        RAGFlow
+        <img
+          src="/logo.svg"
+          alt=""
+          aria-hidden="true"
+          className="size-12 object-contain"
+        />
+        <span className="text-text-primary">Agentos-RAG</span>
       </h1>
       {showEmbedIcon && <EmbedIcon></EmbedIcon>}
     </div>

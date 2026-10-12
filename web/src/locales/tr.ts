@@ -500,7 +500,7 @@ Prosedürel Bellek: Öğrenilen beceriler, alışkanlıklar ve otomatik prosedü
       testSetting: 'Ayar',
       retrievalTesting: 'Alım testi',
       retrievalTestingDescription:
-        "RAGFlow'nun LLM için hedeflenen içeriği alıp alamadığını kontrol etmek için bir alım testi yapın.",
+        "Agentos-RAG'nun LLM için hedeflenen içeriği alıp alamadığını kontrol etmek için bir alım testi yapın.",
       Parse: 'Ayrıştır',
       dataset: 'Dataset',
       testing: 'Alım testi',
@@ -536,10 +536,10 @@ Prosedürel Bellek: Öğrenilen beceriler, alışkanlıklar ve otomatik prosedü
       noTestResultsForNotRuned:
         'Henüz test çalıştırılmadı. Sonuçlar burada görünecek.',
       testingDescription:
-        "RAGFlow'nun LLM için hedeflenen içeriği alıp alamadığını kontrol etmek için bir alım testi yapın.",
+        "Agentos-RAG'nun LLM için hedeflenen içeriği alıp alamadığını kontrol etmek için bir alım testi yapın.",
       similarityThreshold: 'Benzerlik eşiği',
       similarityThresholdTip:
-        'RAGFlow, alım sırasında ağırlıklı anahtar kelime benzerliği ile ağırlıklı vektör kosinüs benzerliğinin veya ağırlıklı yeniden sıralama puanının kombinasyonunu kullanır. Bu parametre, kullanıcı sorgusu ile parçalar arasındaki benzerlik eşiğini belirler. Bu eşiğin altında benzerlik puanına sahip parçalar sonuçlardan çıkarılır. Varsayılan eşik 20 olarak ayarlanmıştır, yani yalnızca 20 veya daha yüksek hibrit benzerlik puanına sahip parçalar alınacaktır.',
+        'Agentos-RAG, alım sırasında ağırlıklı anahtar kelime benzerliği ile ağırlıklı vektör kosinüs benzerliğinin veya ağırlıklı yeniden sıralama puanının kombinasyonunu kullanır. Bu parametre, kullanıcı sorgusu ile parçalar arasındaki benzerlik eşiğini belirler. Bu eşiğin altında benzerlik puanına sahip parçalar sonuçlardan çıkarılır. Varsayılan eşik 20 olarak ayarlanmıştır, yani yalnızca 20 veya daha yüksek hibrit benzerlik puanına sahip parçalar alınacaktır.',
       vectorSimilarityWeight: 'Vektör benzerlik ağırlığı',
       vectorSimilarityWeightTip:
         "Bu, birleşik benzerlik puanındaki anahtar kelime benzerliğinin ağırlığını ayarlar. İki ağırlığın toplamı 1.0'a eşit olmalıdır.",
@@ -588,14 +588,14 @@ Prosedürel Bellek: Öğrenilen beceriler, alışkanlıklar ve otomatik prosedü
       changeSpecificCategory: 'Belirli kategoriyi değiştir',
       uploadTitle: 'Yüklemek için dosyanızı buraya sürükleyip bırakın',
       uploadDescription:
-        'Tekil veya toplu dosya yüklemeyi destekler. Yerel olarak dağıtılan RAGFlow için: yükleme başına toplam dosya boyutu sınırı 1GB, 32 dosyalık toplu yükleme sınırı vardır. Hesap başına toplam dosya sayısında sınır yoktur. cloud.ragflow.io için yükleme başına toplam dosya boyutu sınırı 10MB, her dosya en fazla 10MB ve hesap başına en fazla 128 dosya.',
+        'Tekil veya toplu dosya yüklemeyi destekler. Yerel olarak dağıtılan Agentos-RAG için: yükleme başına toplam dosya boyutu sınırı 1GB, 32 dosyalık toplu yükleme sınırı vardır. Hesap başına toplam dosya sayısında sınır yoktur. cloud.ragflow.io için yükleme başına toplam dosya boyutu sınırı 10MB, her dosya en fazla 10MB ve hesap başına en fazla 128 dosya.',
       chunk: 'Parça',
       bulk: 'Toplu',
       cancel: 'İptal',
       close: 'Kapat',
       rerankModel: 'Yeniden sıralama modeli',
       rerankPlaceholder: 'Değer seçin',
-      rerankTip: `İsteğe bağlı. Boş bırakılırsa RAGFlow ağırlıklı anahtar kelime benzerliği ve ağırlıklı vektör kosinüs benzerliğinin kombinasyonunu kullanır; yeniden sıralama modeli seçilirse ağırlıklı yeniden sıralama puanı ağırlıklı vektör kosinüs benzerliğinin yerini alır. Yeniden sıralama modeli kullanmanın sistemin yanıt süresini önemli ölçüde artıracağını unutmayın. Yeniden sıralama modeli kullanmak istiyorsanız bir SaaS yeniden sıralayıcı kullandığınızdan emin olun; yerel olarak dağıtılmış yeniden sıralama modelini tercih ediyorsanız RAGFlow'u docker-compose-gpu.yml ile başlattığınızdan emin olun.`,
+      rerankTip: `İsteğe bağlı. Boş bırakılırsa Agentos-RAG ağırlıklı anahtar kelime benzerliği ve ağırlıklı vektör kosinüs benzerliğinin kombinasyonunu kullanır; yeniden sıralama modeli seçilirse ağırlıklı yeniden sıralama puanı ağırlıklı vektör kosinüs benzerliğinin yerini alır. Yeniden sıralama modeli kullanmanın sistemin yanıt süresini önemli ölçüde artıracağını unutmayın. Yeniden sıralama modeli kullanmak istiyorsanız bir SaaS yeniden sıralayıcı kullandığınızdan emin olun; yerel olarak dağıtılmış yeniden sıralama modelini tercih ediyorsanız Agentos-RAG'u docker-compose-gpu.yml ile başlattığınızdan emin olun.`,
       topK: 'Top-K',
       topKTip: `Yeniden sıralama modeli ile birlikte kullanılır; bu ayar belirtilen yeniden sıralama modeline gönderilecek metin parçası sayısını tanımlar.`,
       delimiter: `Metin sınırlayıcısı`,
@@ -751,7 +751,7 @@ Prosedürel Bellek: Öğrenilen beceriler, alışkanlıklar ve otomatik prosedü
       tableColumnModeAuto: 'Otomatik',
       tableColumnModeManual: 'El ile',
       tableColumnModeAutoDescription:
-        'Tüm sütunlar parça metnine dahil edilir ve meta veri olarak saklanır (RAGFlow varsayılanı).',
+        'Tüm sütunlar parça metnine dahil edilir ve meta veri olarak saklanır (Agentos-RAG varsayılanı).',
       tableColumnRoles: 'Sütun rolleri',
       tableColumnRolesTip:
         'Hangi sütunların parça metnine (vektör ve tam metin araması için dizinlenir), yalnızca meta veriye (filtrelenebilir) veya her ikisine dahil edileceğini seçin. Değişiklikler yeni ayrıştırmalarda geçerli olur; rollerin etkili olması için mevcut belgeleri yeniden ayrıştırın.',
@@ -1076,7 +1076,7 @@ Bu otomatik etiketleme özelliği, mevcut datasete alanına özgü bilgi katman�
         'Yeniden sıralama adayları, Top N değerinden büyük veya ona eşit olmalıdır.',
       variable: 'Değişken',
       variableTip:
-        "RAGFlow'nun sohbet asistanı yönetim API'leri ile birlikte kullanıldığında değişkenler, daha esnek sistem istemi stratejileri geliştirmeye yardımcı olur. Tanımlanan değişkenler, LLM'ye gönderilen istemlerin bir parçası olarak 'Sistem istemi' tarafından kullanılır. {knowledge}, belirtilen dataset'lerden getirilen parçaları temsil eden ayrılmış özel bir değişkendir ve tüm değişkenler 'Sistem istemi' içinde süslü parantez {} arasına alınmalıdır. Ayrıntılar için https://ragflow.io/docs/chat_configuration#system-prompt adresine bakın.",
+        "Agentos-RAG'nun sohbet asistanı yönetim API'leri ile birlikte kullanıldığında değişkenler, daha esnek sistem istemi stratejileri geliştirmeye yardımcı olur. Tanımlanan değişkenler, LLM'ye gönderilen istemlerin bir parçası olarak 'Sistem istemi' tarafından kullanılır. {knowledge}, belirtilen dataset'lerden getirilen parçaları temsil eden ayrılmış özel bir değişkendir ve tüm değişkenler 'Sistem istemi' içinde süslü parantez {} arasına alınmalıdır. Ayrıntılar için https://ragflow.io/docs/chat_configuration#system-prompt adresine bakın.",
       add: 'Ekle',
       key: 'Anahtar',
       variableKeyMessage: 'Lütfen değişken anahtarını girin',
@@ -1175,7 +1175,7 @@ Bu otomatik etiketleme özelliği, mevcut datasete alanına özgü bilgi katman�
       extensionTitle: 'Chrome uzantısı',
       tokenError: 'Lütfen önce API anahtarı oluşturun.',
       betaError:
-        'Lütfen önce Sistem Ayarları sayfasından bir RAGFlow API anahtarı edinin.',
+        'Lütfen önce Sistem Ayarları sayfasından bir Agentos-RAG API anahtarı edinin.',
       searching: 'Aranıyor...',
       parsing: 'Ayrıştırılıyor',
       uploading: 'Yükleniyor',
@@ -1561,7 +1561,7 @@ Bu otomatik etiketleme özelliği, mevcut datasete alanına özgü bilgi katman�
       webdavRemotePathTip:
         'İsteğe bağlı: WebDAV sunucusunda bir klasör yolu belirtin.',
       webdavCaCertPathTip:
-        'İsteğe bağlı: RAGFlow konteynerinin içine bağlanmış bir CA sertifika paketinin yolu.',
+        'İsteğe bağlı: Agentos-RAG konteynerinin içine bağlanmış bir CA sertifika paketinin yolu.',
       google_driveTokenTip:
         'OAuth yardımcısından veya Google Cloud Console\'dan oluşturulan OAuth token JSON\'unu yükleyin. "installed" veya "web" uygulamasından bir client_secret JSON da yükleyebilirsiniz. Bu ilk senkronizasyonunuzsa, OAuth onayını tamamlamak için bir tarayıcı penceresi açılacaktır. JSON zaten bir yenileme token\'ı içeriyorsa otomatik olarak yeniden kullanılacaktır.',
       google_drivePrimaryAdminTip:
@@ -2020,7 +2020,7 @@ Bu otomatik etiketleme özelliği, mevcut datasete alanına özgü bilgi katman�
       chatModelTip: 'Her yeni oluşturulan dataset için varsayılan LLM.',
       embeddingModel: 'Embedding',
       embeddingModelTip:
-        'Her yeni oluşturulan dataset için varsayılan embedding model. Açılır listede bir embedding model bulamıyorsanız, RAGFlow slim sürümünü (embedding modeller içermez) kullanıp kullanmadığınızı kontrol edin veya model sağlayıcınızın bu modeli destekleyip desteklemediğini görmek için https://ragflow.io/docs/dev/supported_models adresine bakın.',
+        'Her yeni oluşturulan dataset için varsayılan embedding model. Açılır listede bir embedding model bulamıyorsanız, Agentos-RAG slim sürümünü (embedding modeller içermez) kullanıp kullanmadığınızı kontrol edin veya model sağlayıcınızın bu modeli destekleyip desteklemediğini görmek için https://ragflow.io/docs/dev/supported_models adresine bakın.',
       img2txtModel: 'VLM',
       img2txtModelTip:
         'Her yeni oluşturulan dataset için varsayılan VLM. Bir resmi veya videoyu tanımlar. Açılır listede bir model bulamıyorsanız, model sağlayıcınızın bu modeli destekleyip desteklemediğini görmek için https://ragflow.io/docs/dev/supported_models adresine bakın.',
@@ -2469,7 +2469,7 @@ Bu otomatik etiketleme özelliği, mevcut datasete alanına özgü bilgi katman�
       directory: 'Dizin',
       uploadTitle: 'Yüklemek için dosyanızı buraya sürükleyip bırakın',
       uploadDescription:
-        'Tekil veya toplu dosya yüklemeyi destekler. Yerel RAGFlow için 1GB sınır, 32 dosya toplu yükleme sınırı.',
+        'Tekil veya toplu dosya yüklemeyi destekler. Yerel Agentos-RAG için 1GB sınır, 32 dosya toplu yükleme sınırı.',
       local: 'Yerel yüklemeler',
       s3: 'S3 yüklemeleri',
       preview: 'Önizleme',
@@ -3725,7 +3725,7 @@ Temel Talimatlar:
     },
     admin: {
       loginTitle: 'Yönetici konsolu',
-      title: 'RAGFlow',
+      title: 'Agentos-RAG',
       confirm: 'Onayla',
       close: 'Kapat',
       yes: 'Evet',
