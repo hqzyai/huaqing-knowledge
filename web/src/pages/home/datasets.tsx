@@ -1,4 +1,3 @@
-import { CardSineLineContainer } from '@/components/card-singleline-container';
 import { EmptyCardType } from '@/components/empty/constant';
 import { EmptyAppCard } from '@/components/empty/empty';
 import { RenameDialog } from '@/components/rename-dialog';
@@ -27,7 +26,7 @@ export function Datasets() {
   return (
     <section>
       <header>
-        <h2 className="leading-8 text-2xl font-semibold mb-2.5">
+        <h2 className="leading-8 text-xl font-semibold mb-4">
           {/* <IconFont name="data" className="size-8"></IconFont> */}
           <HomeIcon imgClass="me-2.5" name="datasets" width={24} />
           {t('header.dataset')}
@@ -41,8 +40,8 @@ export function Datasets() {
           </div>
         ) : (
           <>
-            {kbs?.length > 0 && (
-              <CardSineLineContainer>
+            {(kbs?.length ?? 0) > 0 && (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {kbs?.slice(0, 6).map((dataset) => (
                   <DatasetCard
                     key={dataset.id}
@@ -55,7 +54,7 @@ export function Datasets() {
                     click={() => navigateToDatasetList({ isCreate: false })}
                   ></SeeAllAppCard>
                 }
-              </CardSineLineContainer>
+              </div>
             )}
             {!(kbs && kbs?.length > 0) && (
               <div className="w-[210px]">

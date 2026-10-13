@@ -15,8 +15,7 @@
  */
 
 import { BuiltinPipelineItem } from '@/components/builtin-pipeline-form-field';
-import { DataFlowSelect } from '@/components/data-pipeline-select';
-import { ParseTypeItem } from '@/components/parse-type-form-field';
+import { BuiltinParserNotice } from '@/components/builtin-parser-notice';
 import PipelineOperatorTabs from '@/components/pipeline-operator-tabs';
 import { ButtonLoading } from '@/components/ui/button';
 import {
@@ -27,7 +26,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
-import { ParseType } from '@/constants/knowledge';
 import { IModalProps } from '@/interfaces/common';
 import { IChangeParserRequestBody } from '@/interfaces/request/document';
 import { useCallback } from 'react';
@@ -57,7 +55,6 @@ export function DocumentPipelineDialog({
 
   const {
     form,
-    parseType,
     operatorNodes,
     operatorNodesLoading,
     activeTab,
@@ -96,7 +93,7 @@ export function DocumentPipelineDialog({
 
   return (
     <Dialog open onOpenChange={hideModal}>
-      <DialogContent className="max-w-[50vw] text-text-primary">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-3xl text-text-primary">
         <DialogHeader>
           <DialogTitle>{t('knowledgeDetails.chunkMethod')}</DialogTitle>
         </DialogHeader>
@@ -104,18 +101,11 @@ export function DocumentPipelineDialog({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-            className="space-y-6 max-h-[70vh] overflow-auto -mx-6 px-10 py-5"
+            className="space-y-5 max-h-[70vh] overflow-auto px-1 py-2"
             id={FormId}
           >
-            <ParseTypeItem />
-            {parseType === ParseType.BuiltIn && <BuiltinPipelineItem />}
-            {parseType === ParseType.Pipeline && (
-              <DataFlowSelect
-                isMult={false}
-                showToDataPipeline={true}
-                formFieldName="pipeline_id"
-              />
-            )}
+            <BuiltinParserNotice pipelineId={pipelineId} />
+            <BuiltinPipelineItem />
             {showOperatorTabs && (
               <PipelineOperatorTabs
                 nodes={operatorNodes}

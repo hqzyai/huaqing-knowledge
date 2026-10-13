@@ -16,6 +16,7 @@ import { downloadFileFromBlob } from '@/utils/file-util';
 import { Download, Eye, PenLine, Trash2 } from 'lucide-react';
 import { omit } from 'lodash';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { UseRenameDocumentShowType } from './use-rename-document';
 import { isDocumentProcessing } from './utils';
 
@@ -34,6 +35,7 @@ export function DatasetActionCell({
 }: { record: IDocumentInfo } & UseRenameDocumentShowType &
   Pick<UseRowSelectionType, 'setRowSelection'>) {
   const { id, type } = record;
+  const { t } = useTranslation();
   const isRunning = isDocumentProcessing(record);
   const isVirtualDocument = type === DocumentType.Virtual;
 
@@ -70,20 +72,26 @@ export function DatasetActionCell({
   return (
     <div
       className="
-      flex gap-2 items-center opacity-0
-      transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+      flex gap-2 items-center"
     >
       <Button
         size="icon-xs"
         variant="ghost"
         disabled={isRunning}
         onClick={handleRename}
+        aria-label={t('common.rename')}
+        title={t('common.rename')}
       >
         <PenLine className="size-[1em]" />
       </Button>
       <HoverCard>
-        <HoverCardTrigger>
-          <Button size="icon-xs" variant="ghost" disabled={isRunning}>
+        <HoverCardTrigger asChild>
+          <Button
+            size="icon-xs"
+            variant="ghost"
+            aria-label={t('workspace.details')}
+            title={t('workspace.details')}
+          >
             <Eye className="size-[1em]" />
           </Button>
         </HoverCardTrigger>
@@ -113,6 +121,8 @@ export function DatasetActionCell({
           size="icon-xs"
           variant="ghost"
           onClick={onDownloadDocument}
+          aria-label={t('workspace.download')}
+          title={t('workspace.download')}
           disabled={isRunning}
         >
           <Download className="size-[1em]" />
@@ -121,6 +131,8 @@ export function DatasetActionCell({
       <ConfirmDeleteDialog onOk={handleRemove}>
         <Button
           data-testid="document-delete"
+          aria-label={t('common.delete')}
+          title={t('common.delete')}
           size="icon-xs"
           variant="ghost"
           disabled={isRunning}

@@ -5,6 +5,8 @@ import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
+import { z } from 'zod';
+import { formSchema } from './form-schema';
 
 export function GeneralSavingButton() {
   const form = useFormContext();
@@ -50,7 +52,7 @@ export function GeneralSavingButton() {
 export function SavingButton() {
   const { saveKnowledgeConfiguration, loading: submitLoading } =
     useUpdateKnowledge();
-  const form = useFormContext();
+  const form = useFormContext<z.infer<typeof formSchema>>();
   const { id: kb_id } = useParams();
   const { t } = useTranslation();
 
@@ -68,12 +70,11 @@ export function SavingButton() {
             }
             if (beValid) {
               form.handleSubmit(async (originalValues) => {
-                const values = originalValues;
-                if (originalValues.parse_type === ParseType.BuiltIn) {
-                  values.pipeline_id = null;
-                } else {
-                  values.chunk_method = null;
-                }
+                const values = {
+                  ...originalValues,
+                  parse_type: ParseType.BuiltIn,
+                  pipeline_id: null,
+                };
 
                 await saveKnowledgeConfiguration({
                   kb_id,
@@ -81,14 +82,14 @@ export function SavingButton() {
                   parser_config: {
                     ...values.parser_config,
                     image_table_context_window:
-                      values.parser_config.image_table_context_window,
+                      values.parser_config?.image_table_context_window,
                     image_context_size:
-                      values.parser_config.image_table_context_window,
+                      values.parser_config?.image_table_context_window,
                     table_context_size:
-                      values.parser_config.image_table_context_window,
+                      values.parser_config?.image_table_context_window,
                     // Unset children delimiter if this option is not enabled
-                    children_delimiter: values.parser_config.enable_children
-                      ? values.parser_config.children_delimiter
+                    children_delimiter: values.parser_config?.enable_children
+                      ? values.parser_config?.children_delimiter
                       : '',
                   },
                 });

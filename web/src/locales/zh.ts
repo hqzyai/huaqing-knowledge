@@ -1,5 +1,16 @@
 export default {
   translation: {
+    workspace: {
+      settings: '模型与设置',
+      title: '知识工作台',
+      description: '管理企业知识，验证检索质量，让每一次回答有据可循。',
+      createDataset: '创建知识库',
+      startChat: '知识问答',
+      search: '检索知识',
+      files: '管理文件',
+      details: '文档信息',
+      download: '下载原文件',
+    },
     common: {
       confirm: '确定',
       back: '返回',
@@ -419,7 +430,7 @@ export default {
       generateToSkills:
         '从该数据集构建分层 Skills 树，并存储生成的 Skills 页面以供搜索和复用。',
       processingType: '处理类型',
-      dataPipeline: '切换或配置 ingestion pipeline。',
+      dataPipeline: '解析设置',
       dataPipelineTitle: '数据管道',
       operations: '操作',
       taskId: '任务ID',
@@ -582,6 +593,9 @@ export default {
       theDocumentBeingParsedCannotBeDeleted: '正在解析的文档不能被删除',
     },
     knowledgeConfiguration: {
+      builtinParsing: '内置解析设置',
+      builtinSwitchNotice:
+        '当前配置使用自定义流程。保存将切换为内置解析，请重新确认解析方式及参数。',
       randomSeedTip:
         '种子是伪随机算法的起点，它确保在不同运行中产生相同的输出，从而保证可重复性。',
       datasetDescription: '你的知识库描述。',
@@ -646,12 +660,12 @@ export default {
       editLinkDataPipeline: '编辑 pipeline',
       linkPipelineSetTip: '管理与此知识库的数据管道链接',
       default: '默认',
-      dataPipeline: '切换或配置 ingestion pipeline。',
+      dataPipeline: '解析设置',
       linkDataPipeline: '关联 pipeline',
       enableAutoGenerate: '是否启用自动生成',
       teamPlaceholder: '请选择团队',
       dataFlowPlaceholder: '请选择 pipeline',
-      buildItFromScratch: '去 Scratch 构建',
+      buildItFromScratch: '管理解析流程（新标签页）',
       dataFlow: 'pipeline',
       parseType: '解析方法',
       manualSetup: '选择pipeline',

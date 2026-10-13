@@ -104,14 +104,14 @@ export default function Chat() {
   return (
     <RootLayoutContainer>
       <section className="h-full flex flex-col" data-testid="chat-detail">
-        <article className="flex flex-1 min-h-0 pb-9">
+        <article className="flex flex-1 min-h-0">
           <Sessions
             handleConversationCardClick={handleConversationCardClick}
           ></Sessions>
 
           <Card className="flex-1 min-w-0 bg-transparent border-none shadow-none h-full">
             <CardContent className="flex p-0 h-full">
-              <Card className="flex flex-col flex-1 bg-transparent min-w-0 overflow-hidden">
+              <Card className="flex flex-col flex-1 bg-transparent min-w-0 overflow-hidden rounded-none border-y-0">
                 <CardHeader
                   className={cn('p-5', {
                     'border-b-0.5 border-border-button': hasSingleChatBox,

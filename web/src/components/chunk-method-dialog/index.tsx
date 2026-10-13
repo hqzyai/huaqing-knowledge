@@ -51,15 +51,14 @@ import {
   AutoQuestionsFormField,
 } from '../auto-keywords-form-field';
 import { ChildrenDelimiterForm } from '../children-delimiter-form';
-import { DataFlowSelect } from '../data-pipeline-select';
 import { DelimiterFormField } from '../delimiter-form-field';
 import { EntityTypesFormField } from '../entity-types-form-field';
 import { ExcelToHtmlFormField } from '../excel-to-html-form-field';
 import { LayoutRecognizeFormField } from '../layout-recognize-form-field';
 import { MaxTokenNumberFormField } from '../max-token-number-from-field';
 import { MinerUOptionsFormField } from '../mineru-options-form-field';
-import { ParseTypeItem } from '../parse-type-form-field';
 import { ButtonLoading } from '../ui/button';
+import { BuiltinParserNotice } from '../builtin-parser-notice';
 import { Input } from '../ui/input';
 import { DynamicPageRange } from './dynamic-page-range';
 import { useShowAutoKeywords } from './hooks';
@@ -114,7 +113,7 @@ export function ChunkMethodDialog({
 
   const FormSchema = z
     .object({
-      parseType: z.nativeEnum(ParseType),
+      parseType: z.literal(ParseType.BuiltIn),
       parser_id: z.string().trim().optional(),
       pipeline_id: z.string().optional(),
       parser_config: z.object({
@@ -186,21 +185,14 @@ export function ChunkMethodDialog({
           code: 'custom',
         });
       }
-      if (data.parseType === ParseType.Pipeline && !data.pipeline_id) {
-        ctx.addIssue({
-          path: ['pipeline_id'],
-          message: t('common.pleaseSelect'),
-          code: 'custom',
-        });
-      }
     });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      parser_id: parserId || '',
-      pipeline_id: pipelineId || '',
-      parseType: pipelineId ? ParseType.Pipeline : ParseType.BuiltIn,
+      parser_id: pipelineId ? DocumentParserType.Naive : parserId || '',
+      pipeline_id: '',
+      parseType: ParseType.BuiltIn,
       parser_config: defaultParserValues,
     },
   });
@@ -275,24 +267,28 @@ export function ChunkMethodDialog({
       const pages =
         parserConfig?.pages?.map((x) => ({ from: x[0], to: x[1] })) ?? [];
       form.reset({
-        parser_id: parserId || '',
-        pipeline_id: pipelineId || '',
-        parseType: pipelineId ? ParseType.Pipeline : ParseType.BuiltIn,
-        parser_config: fillDefaultParserValue({
-          pages: pages.length > 0 ? pages : [{ from: 1, to: 100000 }],
-          ...omit(parserConfig, 'pages'),
-          image_table_context_window:
-            parserConfig?.image_table_context_window ??
-            parserConfig?.image_context_size ??
-            parserConfig?.table_context_size,
-          // graphrag: {
-          //   use_graphrag: get(
-          //     parserConfig,
-          //     'graphrag.use_graphrag',
-          //     useGraphRag,
-          //   ),
-          // },
-        }),
+        parser_id: pipelineId ? DocumentParserType.Naive : parserId || '',
+        pipeline_id: '',
+        parseType: ParseType.BuiltIn,
+        parser_config: fillDefaultParserValue(
+          pipelineId
+            ? {}
+            : {
+                pages: pages.length > 0 ? pages : [{ from: 1, to: 100000 }],
+                ...omit(parserConfig, 'pages'),
+                image_table_context_window:
+                  parserConfig?.image_table_context_window ??
+                  parserConfig?.image_context_size ??
+                  parserConfig?.table_context_size,
+                // graphrag: {
+                //   use_graphrag: get(
+                //     parserConfig,
+                //     'graphrag.use_graphrag',
+                //     useGraphRag,
+                //   ),
+                // },
+              },
+        ),
       });
     }
   }, [
@@ -305,19 +301,9 @@ export function ChunkMethodDialog({
     useGraphRag,
     visible,
   ]);
-  const parseType = useWatch({
-    control: form.control,
-    name: 'parseType',
-    defaultValue: pipelineId ? ParseType.Pipeline : ParseType.BuiltIn,
-  });
-  useEffect(() => {
-    if (parseType === ParseType.BuiltIn) {
-      form.setValue('pipeline_id', '');
-    }
-  }, [parseType, form]);
   return (
     <Dialog open onOpenChange={hideModal}>
-      <DialogContent className="max-w-[50vw] text-text-primary">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-3xl text-text-primary">
         <DialogHeader>
           <DialogTitle>{t('knowledgeDetails.chunkMethod')}</DialogTitle>
         </DialogHeader>
@@ -325,41 +311,37 @@ export function ChunkMethodDialog({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 max-h-[70vh] overflow-auto -mx-6 px-10 py-5"
+            className="space-y-5 max-h-[70vh] overflow-auto px-1 py-2"
             id={FormId}
           >
             <div className="space-y-6">
-              <ParseTypeItem />
-              {parseType === ParseType.BuiltIn && <ChunkMethodItem />}
+              <BuiltinParserNotice pipelineId={pipelineId} />
+              <ChunkMethodItem />
 
-              {showPages && parseType === ParseType.BuiltIn && (
-                <DynamicPageRange />
+              {showPages && <DynamicPageRange />}
+
+              {showPages && layoutRecognize && (
+                <FormField
+                  control={form.control}
+                  name="parser_config.task_page_size"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        tooltip={t('knowledgeDetails.taskPageSizeTip')}
+                      >
+                        {t('knowledgeDetails.taskPageSize')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} type={'number'} min={1} max={128} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               )}
-
-              {showPages &&
-                parseType === ParseType.BuiltIn &&
-                layoutRecognize && (
-                  <FormField
-                    control={form.control}
-                    name="parser_config.task_page_size"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel
-                          tooltip={t('knowledgeDetails.taskPageSizeTip')}
-                        >
-                          {t('knowledgeDetails.taskPageSize')}
-                        </FormLabel>
-                        <FormControl>
-                          <Input {...field} type={'number'} min={1} max={128} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
             </div>
 
-            {parseType === ParseType.BuiltIn && (
+            {
               <>
                 <div className="space-y-6 border-t-0.5 border-border-button pt-6 empty:hidden">
                   {showOne && (
@@ -413,17 +395,7 @@ export function ChunkMethodDialog({
                   {showEntityTypes && <EntityTypesFormField />}
                 </div>
               </>
-            )}
-
-            <div className="space-y-6 empty:hidden">
-              {parseType === ParseType.Pipeline && (
-                <DataFlowSelect
-                  isMult={false}
-                  // toDataPipeline={navigateToAgents}
-                  formFieldName="pipeline_id"
-                />
-              )}
-            </div>
+            }
           </form>
         </Form>
         <DialogFooter>

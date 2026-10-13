@@ -5,8 +5,8 @@ import { Datasets } from './datasets';
 
 const Home = () => {
   return (
-    <PageContainer>
-      <article>
+    <PageContainer className="px-5 py-6 lg:px-8">
+      <article className="mx-auto max-w-[1440px]">
         <header className="mb-8">
           <NextBanner />
         </header>

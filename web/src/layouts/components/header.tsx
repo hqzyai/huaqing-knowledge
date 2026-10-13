@@ -12,197 +12,99 @@ import {
   useListTenant,
 } from '@/hooks/use-user-setting-request';
 import { cn } from '@/lib/utils';
+import { supportedLanguages } from '@/locales/config';
 import { TenantRole } from '@/pages/user-setting/constants';
 import { Routes } from '@/routes';
-import {
-  LucideChevronDown,
-  LucideCircleHelp,
-  LucideLanguages,
-} from 'lucide-react';
-import React, { useMemo } from 'react';
-import { Link, useLocation } from 'react-router';
+import { Languages } from 'lucide-react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import { BellButton } from './bell-button';
-import { DesktopNavbar, MobileNavbar } from './global-navbar';
+import { MobileNavbar } from './global-navbar';
 import { MobileMenuFooter } from './mobile-menu-footer';
 import ThemeButton from './theme-button';
-import { useHeaderNavLayout } from './use-header-nav-layout';
 
-import { supportedLanguages } from '@/locales/config';
+function LanguageOption({ code, label }: { code: string; label: string }) {
+  const changeLanguage = useChangeLanguage();
+  const handleSelect = () => changeLanguage(code);
+  return <DropdownMenuItem onSelect={handleSelect}>{label}</DropdownMenuItem>;
+}
+
+const renderMobileFooter = (close: () => void) => (
+  <MobileMenuFooter onClose={close} />
+);
 
 export function Header({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
-  const { pathname } = useLocation();
-  const changeLanguage = useChangeLanguage();
-
+  const { t } = useTranslation();
   const {
     data: { language = 'en', avatar, nickname },
   } = useFetchUserInfo();
-
   const { data: tenantData } = useListTenant();
-  const hasNotification = useMemo(
-    () => tenantData?.some((x) => x.role === TenantRole.Invite),
-    [tenantData],
-  );
-
   const currentLanguage = supportedLanguages.find((x) => x.code === language);
-
-  const {
-    headerRef,
-    logoRef,
-    expandedRightMeasureRef,
-    navMeasureRef,
-    isCompact,
-  } = useHeaderNavLayout(`${hasNotification}-${language}`);
-
   return (
-    <>
-      <header
-        ref={headerRef}
-        key="app-navbar"
-        className={cn(
-          'w-full min-w-0 flex items-center gap-2 sm:gap-4',
-          className,
-        )}
-        {...props}
-      >
-        <div className="inline-flex shrink-0 items-center gap-2">
-          {isCompact && (
-            <MobileNavbar
-              renderFooter={(close) => <MobileMenuFooter onClose={close} />}
-            />
-          )}
-          <div ref={logoRef} className="inline-flex shrink-0 items-center">
-            <Link
-              to={Routes.Root}
-              aria-current={pathname === Routes.Root ? 'page' : undefined}
-              className="flex size-10 shrink-0 items-center justify-center"
-            >
-              <img
-                src="/logo.svg"
-                alt="Agentos-RAG logo"
-                className="size-10 object-contain"
-              />
-            </Link>
-          </div>
+    <header
+      className={cn(
+        'flex min-w-0 items-center justify-between gap-3',
+        className,
+      )}
+      {...props}
+    >
+      <div className="flex min-w-0 items-center gap-2">
+        <div className="lg:hidden">
+          <MobileNavbar renderFooter={renderMobileFooter} />
         </div>
-
-        {!isCompact && (
-          <div className="flex min-w-0 flex-1 justify-center overflow-hidden">
-            <DesktopNavbar />
-          </div>
-        )}
-
-        {isCompact && <div className="flex-1" aria-hidden />}
-
-        <div
-          className={cn(
-            'flex shrink-0 items-center justify-end text-text-badge',
-            isCompact ? 'gap-0.5' : 'gap-4',
-          )}
-          data-testid="auth-status"
-        >
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className={cn(
-                  'size-10 shrink-0 px-0',
-                  !isCompact && 'size-auto gap-1 px-4',
-                )}
-                aria-label={currentLanguage?.displayName}
-              >
-                {isCompact && <LucideLanguages className="size-5" />}
-                {!isCompact && (
-                  <>
-                    {currentLanguage?.displayName}
-                    <LucideChevronDown className="size-[1em]" />
-                  </>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end">
-              {supportedLanguages.map((x) => (
-                <DropdownMenuItem
-                  key={x.code}
-                  onClick={() => changeLanguage(x.code)}
-                >
-                  {x.displayName}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {!isCompact && (
-            <>
-              <Button
-                asLink
-                variant="ghost"
-                size="icon"
-                className="size-8"
-                to="https://ragflow.io/docs/dev/category/user-guides"
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                <LucideCircleHelp className="size-[1em]" />
-              </Button>
-
-              {hasNotification && <BellButton className="!size-8" />}
-            </>
-          )}
-
-          <ThemeButton className={cn(!isCompact && '!size-8')} />
-
-          <Link
-            to={Routes.UserSetting}
-            className={cn(
-              'relative flex size-10 shrink-0 items-center justify-center',
-              !isCompact && 'ms-3',
-            )}
-            data-testid="settings-entrypoint"
-          >
-            <RAGFlowAvatar
-              name={nickname}
-              avatar={avatar}
-              isPerson
-              className="size-8"
-            />
-          </Link>
-        </div>
-      </header>
-
-      <div
-        className="pointer-events-none invisible fixed -left-[9999px] top-0"
-        aria-hidden
-      >
-        <div ref={navMeasureRef}>
-          <DesktopNavbar />
-        </div>
-        <div
-          ref={expandedRightMeasureRef}
-          className="inline-flex shrink-0 items-center justify-end gap-4 text-text-badge"
-        >
-          <Button variant="ghost" className="size-auto gap-1 px-4">
-            {currentLanguage?.displayName}
-            <LucideChevronDown className="size-[1em]" />
-          </Button>
-          <Button variant="ghost" size="icon" className="size-8">
-            <LucideCircleHelp className="size-[1em]" />
-          </Button>
-          <ThemeButton className="!size-8" />
-          {hasNotification && <BellButton className="!size-8" />}
-          <div className="relative ms-3 flex size-10 shrink-0 items-center justify-center">
-            <RAGFlowAvatar
-              name={nickname}
-              avatar={avatar}
-              isPerson
-              className="size-8"
-            />
-          </div>
-        </div>
+        <span className="truncate text-sm font-medium text-text-secondary">
+          {t('workspace.title')}
+        </span>
       </div>
-    </>
+      <div
+        className="flex shrink-0 items-center gap-2"
+        data-testid="auth-status"
+      >
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={currentLanguage?.displayName}
+            >
+              <Languages className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {supportedLanguages.map((x) => (
+              <LanguageOption
+                key={x.code}
+                code={x.code}
+                label={x.displayName}
+              />
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {tenantData?.some((x) => x.role === TenantRole.Invite) && (
+          <BellButton />
+        )}
+        <ThemeButton />
+        <Link
+          to={Routes.UserSetting}
+          aria-label={t('workspace.settings')}
+          className="flex items-center gap-2 rounded-lg p-1"
+          data-testid="settings-entrypoint"
+        >
+          <RAGFlowAvatar
+            name={nickname}
+            avatar={avatar}
+            isPerson
+            className="size-8"
+          />
+          <span className="hidden max-w-32 truncate text-sm text-text-secondary sm:block">
+            {nickname}
+          </span>
+        </Link>
+      </div>
+    </header>
   );
 }

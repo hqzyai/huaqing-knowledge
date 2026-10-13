@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 export const formSchema = z
   .object({
-    parse_type: z.nativeEnum(ParseType).optional(),
+    parse_type: z.literal(ParseType.BuiltIn),
     pipeline_id: z.string().optional(),
     pipeline_name: z.string().optional(),
     pipeline_avatar: z.string().optional(),
@@ -21,7 +21,7 @@ export const formSchema = z
         }),
       })
       .optional(),
-    parser_id: z.string().optional(),
+    parser_id: z.string().trim().min(1, t('common.pleaseSelect')),
     avatar: z.any().nullish(),
     permission: z.string().optional(),
     language: z.string().optional(),
@@ -41,12 +41,5 @@ export const formSchema = z
       .optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.parse_type === ParseType.Pipeline && !data.pipeline_id) {
-      ctx.addIssue({
-        path: ['pipeline_id'],
-        message: t('common.pleaseSelect'),
-        code: 'custom',
-      });
-    }
     addParserConfigIssues(data.parser_config, ctx, t);
   });

@@ -89,10 +89,12 @@ export const useFetchDatasetSettingOnMount = (
       ]),
       embedding_model: knowledgeDetails.embedding_model,
       connectors: sourceData,
-      parse_type: knowledgeDetails.pipeline_id
-        ? ParseType.Pipeline
-        : ParseType.BuiltIn,
-      parser_config: formParserConfig,
+      parse_type: ParseType.BuiltIn,
+      pipeline_id: '',
+      pipeline_name: '',
+      pipeline_avatar: '',
+      parser_id: knowledgeDetails.pipeline_id ? '' : knowledgeDetails.parser_id,
+      parser_config: knowledgeDetails.pipeline_id ? {} : formParserConfig,
     } as z.infer<typeof formSchema>;
     form.reset(formValues);
   }, [form, knowledgeDetails, sourceData]);
@@ -138,11 +140,8 @@ export const useSaveDatasetSetting = () => {
         payload.parser_config = transformedConfig;
       }
 
-      if (payload.parse_type === ParseType.BuiltIn) {
-        payload.pipeline_id = undefined;
-      } else {
-        payload.parser_id = undefined;
-      }
+      payload.parse_type = ParseType.BuiltIn;
+      payload.pipeline_id = '';
       return saveKnowledgeConfiguration(payload);
     },
     [saveKnowledgeConfiguration],

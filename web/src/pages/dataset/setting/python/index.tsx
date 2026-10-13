@@ -1,5 +1,5 @@
-import { DataFlowSelect } from '@/components/data-pipeline-select';
 import { Button } from '@/components/ui/button';
+import { BuiltinParserNotice } from '@/components/builtin-parser-notice';
 import {
   Card,
   CardContent,
@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/card';
 import Divider from '@/components/ui/divider';
 import { Form } from '@/components/ui/form';
-import { FormLayout } from '@/constants/form';
 import { DocumentParserType, ParseType } from '@/constants/knowledge';
 import { PermissionRole } from '@/constants/permission';
 import { IConnector, IDataset } from '@/interfaces/database/dataset';
@@ -25,7 +24,6 @@ import ChunkMethodLearnMore from './chunk-method-learn-more';
 import LinkDataSource, {
   IDataSourceNodeProps,
 } from './components/link-data-source';
-import { ParseTypeItem } from '@/components/parse-type-form-field';
 import { MainContainer } from './configuration-form-container';
 import { ChunkMethodItem } from './configuration/common-item';
 import { formSchema } from './form-schema';
@@ -86,19 +84,10 @@ export default function DatasetSettings() {
   const { dataSourceInfo } = useDataSourceInfo();
   const { knowledgeDetails, loading: datasetSettingLoading } =
     useFetchKnowledgeConfigurationOnMount(form);
-  // const [pipelineData, setPipelineData] = useState<IDataPipelineNodeProps>();
   const [sourceData, setSourceData] = useState<IDataSourceNodeProps[]>();
 
   useEffect(() => {
     if (knowledgeDetails) {
-      // const data: IDataPipelineNodeProps = {
-      //   id: knowledgeDetails.pipeline_id,
-      //   name: knowledgeDetails.pipeline_name,
-      //   avatar: knowledgeDetails.pipeline_avatar,
-      //   linked: true,
-      // };
-      // setPipelineData(data);
-
       const source_data: IDataSourceNodeProps[] = (
         knowledgeDetails?.connectors ?? []
       ).map((connector: IConnector) => {
@@ -112,11 +101,8 @@ export default function DatasetSettings() {
 
       setSourceData(source_data);
 
-      form.setValue(
-        'parse_type',
-        knowledgeDetails.pipeline_id ? ParseType.Pipeline : ParseType.BuiltIn,
-      );
-      form.setValue('pipeline_id', knowledgeDetails.pipeline_id || '');
+      form.setValue('parse_type', ParseType.BuiltIn);
+      form.setValue('pipeline_id', '');
     }
   }, [knowledgeDetails, form]);
 
@@ -127,17 +113,6 @@ export default function DatasetSettings() {
       console.error('An error occurred during submission:', error);
     }
   }
-  // const handleLinkOrEditSubmit = (
-  //   data: IDataPipelineSelectNode | undefined,
-  // ) => {
-  //   console.log('🚀 ~ DatasetSettings ~ data:', data);
-  //   if (data) {
-  //     setPipelineData(data);
-  //     form.setValue('pipeline_id', data.id || '');
-  //     // form.setValue('pipeline_name', data.name || '');
-  //     // form.setValue('pipeline_avatar', data.avatar || '');
-  //   }
-  // };
 
   const handleLinkOrEditSubmit = (data: IConnector[] | undefined) => {
     if (data) {
@@ -157,25 +132,10 @@ export default function DatasetSettings() {
     }
   };
 
-  const parseType = useWatch({
-    control: form.control,
-    name: 'parse_type',
-    defaultValue: knowledgeDetails.pipeline_id
-      ? ParseType.Pipeline
-      : ParseType.BuiltIn,
-  });
   const selectedTag = useWatch({
     name: 'chunk_method',
     control: form.control,
   });
-
-  useEffect(() => {
-    if (parseType === ParseType.BuiltIn) {
-      form.setValue('pipeline_id', '');
-    } else {
-      form.setValue('chunk_method', DocumentParserType.Naive);
-    }
-  }, [parseType, form]);
 
   const unbindFunc = (data: IDataSourceBase) => {
     if (data) {
@@ -211,7 +171,7 @@ export default function DatasetSettings() {
   };
 
   return (
-    <div className="pr-5 pb-5">
+    <div className="h-full min-h-0 px-4 pb-4">
       <Card className="p-0 h-full flex flex-col bg-transparent shadow-none">
         <CardHeader className="p-5 border-b-0.5 border-border-button">
           <header>
@@ -225,7 +185,7 @@ export default function DatasetSettings() {
           </header>
         </CardHeader>
 
-        <CardContent className="p-0 flex-1 h-0 flex divide-x-0.5">
+        <CardContent className="grid min-h-0 flex-1 grid-cols-1 overflow-auto xl:grid-cols-[minmax(0,1fr)_280px]">
           <DataSetContext.Provider
             value={{
               loading: datasetSettingLoading,
@@ -235,10 +195,13 @@ export default function DatasetSettings() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="flex flex-col"
+                className="flex min-h-0 min-w-0 flex-col"
               >
-                <div className="flex-1 h-0 w-[768px] px-5 pt-5 overflow-y-auto scrollbar-auto">
+                <div className="min-h-0 flex-1 px-5 py-5 xl:overflow-y-auto">
                   <MainContainer className="text-text-secondary">
+                    <BuiltinParserNotice
+                      pipelineId={knowledgeDetails.pipeline_id}
+                    />
                     <div className="text-base font-medium text-text-primary">
                       {t('knowledgeConfiguration.baseInfo')}
                     </div>
@@ -246,30 +209,15 @@ export default function DatasetSettings() {
 
                     <Divider />
                     <div className="text-base font-medium text-text-primary">
-                      {t('knowledgeConfiguration.dataPipeline')}
+                      {t('knowledgeConfiguration.builtinParsing')}
                     </div>
-                    <ParseTypeItem line={1} name="parse_type" />
-                    {parseType === ParseType.BuiltIn && (
-                      <ChunkMethodItem
-                        line={1}
-                        name="chunk_method"
-                      ></ChunkMethodItem>
-                    )}
-                    {parseType === ParseType.Pipeline && (
-                      <DataFlowSelect
-                        isMult={false}
-                        showToDataPipeline={true}
-                        formFieldName="pipeline_id"
-                        layout={FormLayout.Horizontal}
-                      />
-                    )}
+                    <ChunkMethodItem
+                      line={1}
+                      name="chunk_method"
+                    ></ChunkMethodItem>
 
-                    {parseType === ParseType.BuiltIn && <ChunkMethodForm />}
+                    <ChunkMethodForm />
 
-                    {/* <LinkDataPipeline
-                    data={pipelineData}
-                    handleLinkOrEditSubmit={handleLinkOrEditSubmit}
-                  /> */}
                     <Divider />
                     <LinkDataSource
                       data={sourceData}
@@ -280,7 +228,7 @@ export default function DatasetSettings() {
                   </MainContainer>
                 </div>
 
-                <div className="p-5 text-right items-center flex justify-end gap-3 w-[768px]">
+                <div className="sticky bottom-0 flex shrink-0 items-center justify-end gap-3 border-t border-border-button bg-bg-base px-5 py-4">
                   <Button
                     type="reset"
                     variant="transparent"
@@ -297,10 +245,8 @@ export default function DatasetSettings() {
             </Form>
           </DataSetContext.Provider>
 
-          <div className="flex-1 p-5 overflow-auto">
-            {parseType === ParseType.BuiltIn && (
-              <ChunkMethodLearnMore parserId={selectedTag} />
-            )}
+          <div className="border-t border-border-button bg-bg-card p-5 xl:overflow-auto xl:border-l xl:border-t-0">
+            <ChunkMethodLearnMore parserId={selectedTag} />
           </div>
         </CardContent>
       </Card>

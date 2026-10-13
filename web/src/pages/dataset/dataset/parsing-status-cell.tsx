@@ -1,20 +1,9 @@
 import { IconFontFill } from '@/components/icon-font';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { IDocumentInfo } from '@/interfaces/database/document';
-import { CircleQuestionMark, CircleX, Clock3 } from 'lucide-react';
+import { CircleQuestionMark, CircleX, Clock3, Settings2 } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DocumentType, IngestionTaskStatus, RunningStatus } from './constant';
@@ -68,37 +57,22 @@ export function ParseDropdownButton({
   }, [record, showChangeParserModal]);
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="static" size="auto" className="capitalize">
-                {pipeline_id
-                  ? pipeline_name || pipeline_id
-                  : chunk_method === 'naive'
-                    ? 'general'
-                    : chunk_method}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="capitalize">
-                {pipeline_id
-                  ? pipeline_name || pipeline_id
-                  : chunk_method === 'naive'
-                    ? 'general'
-                    : chunk_method}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem onClick={handleShowChangeParserModal}>
-          {t('knowledgeDetails.dataPipeline')}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button
+      variant="outline"
+      size="sm"
+      className="max-w-56 gap-2"
+      onClick={handleShowChangeParserModal}
+      title={t('knowledgeDetails.dataPipeline')}
+    >
+      <Settings2 className="size-3.5 shrink-0" />
+      <span className="truncate capitalize">
+        {pipeline_id
+          ? pipeline_name || pipeline_id
+          : chunk_method === 'naive'
+            ? 'general'
+            : chunk_method}
+      </span>
+    </Button>
   );
 }
 

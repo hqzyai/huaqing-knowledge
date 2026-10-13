@@ -1,6 +1,5 @@
 import { BuiltinPipelineItem } from '@/components/builtin-pipeline-form-field';
-import { DataFlowSelect } from '@/components/data-pipeline-select';
-import { ParseTypeItem } from '@/components/parse-type-form-field';
+import { BuiltinParserNotice } from '@/components/builtin-parser-notice';
 import PipelineOperatorTabs from '@/components/pipeline-operator-tabs';
 import { Button, ButtonLoading } from '@/components/ui/button';
 import {
@@ -12,7 +11,6 @@ import {
 } from '@/components/ui/card';
 import Divider from '@/components/ui/divider';
 import { Form } from '@/components/ui/form';
-import { FormLayout } from '@/constants/form';
 import { ParseType } from '@/constants/knowledge';
 import {
   useActiveTab,
@@ -76,17 +74,6 @@ export default function DatasetSetting() {
     setSourceDataState(sourceData);
   }, [sourceData]);
 
-  const parseType = useWatch({
-    control: form.control,
-    name: 'parse_type',
-    defaultValue: ParseType.BuiltIn,
-  });
-  const pipelineId = useWatch({
-    control: form.control,
-    name: 'pipeline_id',
-    defaultValue: '',
-  });
-
   const builtinPipelineId = useWatch({
     control: form.control,
     name: 'parser_id',
@@ -97,20 +84,10 @@ export default function DatasetSetting() {
     | Record<string, any>
     | undefined;
 
-  const isPipelineMode = parseType === ParseType.Pipeline;
-  const selectedPipelineId = isPipelineMode ? pipelineId : builtinPipelineId;
-  // The saved parser_config only belongs to the pipeline (and parse type) it
-  // was saved with — expose its id only while that exact pipeline is selected,
-  // so that after switching, defaults come purely from the new pipeline's DSL.
-  const savedParseType = knowledgeDetails?.pipeline_id
-    ? ParseType.Pipeline
-    : ParseType.BuiltIn;
-  const savedPipelineId =
-    parseType === savedParseType
-      ? isPipelineMode
-        ? knowledgeDetails?.pipeline_id
-        : knowledgeDetails?.parser_id
-      : undefined;
+  const selectedPipelineId = builtinPipelineId;
+  const savedPipelineId = knowledgeDetails?.pipeline_id
+    ? undefined
+    : knowledgeDetails?.parser_id;
 
   const { operatorNodes, loading: operatorNodesLoading } =
     usePipelineOperatorNodes(
@@ -118,7 +95,7 @@ export default function DatasetSetting() {
       selectedPipelineId && selectedPipelineId === savedPipelineId
         ? pipelineParserConfig
         : undefined,
-      !isPipelineMode,
+      true,
     );
 
   useResetParserConfigOnPipelineChange(
@@ -132,14 +109,6 @@ export default function DatasetSetting() {
 
   const { scrollContainerRef, handleInvalidSubmit } =
     useRevealSubmitErrors(setActiveTab);
-
-  useEffect(() => {
-    if (parseType === ParseType.BuiltIn) {
-      form.setValue('pipeline_id', '');
-      form.setValue('pipeline_name', '');
-      form.setValue('pipeline_avatar', '');
-    }
-  }, [parseType, form]);
 
   const handleSubmit = useCallback(
     async (data: z.infer<typeof formSchema>) => {
@@ -180,13 +149,10 @@ export default function DatasetSetting() {
 
   const pipelineDataList = usePipelineDataList(sourceDataState);
 
-  const showOperatorTabs =
-    operatorNodes.length > 0 &&
-    ((parseType === ParseType.Pipeline && !!pipelineId) ||
-      (parseType === ParseType.BuiltIn && !!builtinPipelineId));
+  const showOperatorTabs = operatorNodes.length > 0 && !!builtinPipelineId;
 
   return (
-    <div className="pr-5 pb-5">
+    <div className="h-full min-h-0 px-4 pb-4">
       <Card className="p-0 h-full flex flex-col bg-transparent shadow-none">
         <CardHeader className="p-5 border-b-0.5 border-border-button">
           <header>
@@ -199,17 +165,20 @@ export default function DatasetSetting() {
           </header>
         </CardHeader>
 
-        <CardContent className="p-0 flex-1 h-0 flex divide-x-0.5">
+        <CardContent className="grid min-h-0 flex-1 grid-cols-1 overflow-auto xl:grid-cols-[minmax(0,1fr)_280px]">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit, handleInvalidSubmit)}
-              className="flex flex-col"
+              className="flex min-h-0 min-w-0 flex-col"
             >
               <div
                 ref={scrollContainerRef}
-                className="flex-1 h-0 w-[768px] px-5 pt-5 overflow-y-auto scrollbar-auto"
+                className="min-h-0 flex-1 px-5 py-5 xl:overflow-y-auto"
               >
                 <section className="space-y-5 text-text-secondary">
+                  <BuiltinParserNotice
+                    pipelineId={knowledgeDetails.pipeline_id}
+                  />
                   <div className="text-base font-medium text-text-primary">
                     {t('knowledgeConfiguration.baseInfo')}
                   </div>
@@ -217,20 +186,10 @@ export default function DatasetSetting() {
 
                   <Divider />
                   <div className="text-base font-medium text-text-primary">
-                    {t('knowledgeConfiguration.dataPipeline')}
+                    {t('knowledgeConfiguration.builtinParsing')}
                   </div>
-                  <ParseTypeItem line={1} name="parse_type" />
-                  {parseType === ParseType.BuiltIn && (
-                    <BuiltinPipelineItem line={1} name="parser_id" />
-                  )}
-                  {parseType === ParseType.Pipeline && (
-                    <DataFlowSelect
-                      isMult={false}
-                      showToDataPipeline={true}
-                      formFieldName="pipeline_id"
-                      layout={FormLayout.Horizontal}
-                    />
-                  )}
+                  <BuiltinPipelineItem line={1} name="parser_id" />
+
                   {showOperatorTabs && (
                     <PipelineOperatorTabs
                       nodes={operatorNodes}
@@ -256,7 +215,7 @@ export default function DatasetSetting() {
                 </section>
               </div>
 
-              <div className="p-5 text-right items-center flex justify-end gap-3 w-[768px]">
+              <div className="sticky bottom-0 flex shrink-0 items-center justify-end gap-3 border-t border-border-button bg-bg-base px-5 py-4">
                 <Button
                   type="reset"
                   variant="transparent"
@@ -281,8 +240,8 @@ export default function DatasetSetting() {
             </form>
           </Form>
 
-          <div className="flex-1 p-5 overflow-auto">
-            {parseType === ParseType.BuiltIn && builtinPipelineId && (
+          <div className="border-t border-border-button bg-bg-card p-5 xl:overflow-auto xl:border-l xl:border-t-0">
+            {builtinPipelineId && (
               <ChunkMethodLearnMore parserId={builtinPipelineId} />
             )}
           </div>

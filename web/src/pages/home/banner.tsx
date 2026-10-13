@@ -1,63 +1,54 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, X } from 'lucide-react';
+import {
+  ArrowRight,
+  FileText,
+  MessageSquare,
+  Plus,
+  Search,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
+import { Routes } from '@/routes';
 
-function BannerCard() {
-  return (
-    <Card className="w-auto border-none h-3/4">
-      <CardContent className="p-4">
-        <span className="inline-block bg-backgroundCoreWeak rounded-sm px-1 text-xs">
-          System
-        </span>
-        <div className="flex mt-1 gap-4">
-          <span className="text-lg truncate">Setting up your LLM</span>
-          <ArrowRight />
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-export function Banner() {
-  return (
-    <section className="bg-[url('@/assets/banner.png')] bg-cover h-28 rounded-2xl  my-8 flex gap-8 justify-between">
-      <div className="h-full text-3xl font-bold items-center inline-flex ml-6">
-        Welcome to Agentos-RAG
-      </div>
-      <div className="flex justify-between items-center gap-4 mr-5">
-        <BannerCard></BannerCard>
-        <BannerCard></BannerCard>
-        <BannerCard></BannerCard>
-        <button
-          type="button"
-          className="relative p-1 hover:bg-white/10 rounded-full transition-colors"
-        >
-          <X className="w-6 h-6 text-white" />
-        </button>
-      </div>
-    </section>
-  );
-}
+const QuickLinks = [
+  { to: Routes.Chats, label: 'workspace.startChat', icon: MessageSquare },
+  { to: Routes.Searches, label: 'workspace.search', icon: Search },
+  { to: Routes.Files, label: 'workspace.files', icon: FileText },
+];
 
 export function NextBanner() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   return (
-    <h1
-      className="text-5xl leading-normal text-left"
-      dir={i18n.language?.startsWith('ar') ? 'rtl' : 'ltr'}
-    >
-      <span className="font-semibold text-text-primary">
-        {t('header.welcome')}{' '}
-      </span>
-      <span className="inline-flex items-center gap-3 font-bold text-text-primary">
-        <img
-          src="/logo.svg"
-          alt=""
-          aria-hidden="true"
-          className="size-12 object-contain"
-        />
-        Agentos-RAG
-      </span>
-    </h1>
+    <section className="space-y-6 border-b border-border-button pb-6">
+      <div className="flex flex-wrap items-center justify-between gap-5">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight text-text-primary">
+            {t('workspace.title')}
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
+            {t('workspace.description')}
+          </p>
+        </div>
+        <Link
+          to={Routes.Datasets + '?isCreate=true'}
+          className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-text-primary px-4 text-sm font-medium text-bg-base"
+        >
+          <Plus className="size-4" />
+          {t('workspace.createDataset')}
+        </Link>
+      </div>
+      <div className="flex flex-wrap gap-x-8 gap-y-3">
+        {QuickLinks.map(({ to, label, icon: Icon }) => (
+          <Link
+            key={to}
+            to={to}
+            className="inline-flex min-h-10 items-center gap-2 text-sm text-text-secondary hover:text-accent-primary"
+          >
+            <Icon className="size-4" />
+            {t(label)}
+            <ArrowRight className="size-3.5" />
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }

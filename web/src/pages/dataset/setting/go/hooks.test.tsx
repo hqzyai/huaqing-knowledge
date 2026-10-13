@@ -37,6 +37,23 @@ describe('useSaveDatasetSetting parser_config metadata lift', () => {
     return { handleSave: current.handleSave, saveKnowledgeConfiguration };
   }
 
+  it('saves built-in parsing and explicitly clears a previous custom pipeline', async () => {
+    const { handleSave, saveKnowledgeConfiguration } = setup();
+    await handleSave({
+      parse_type: 1,
+      parser_id: 'builtin-parser',
+      pipeline_id: 'old-pipeline',
+      parser_config: {},
+    } as never);
+    expect(saveKnowledgeConfiguration).toHaveBeenCalledWith(
+      expect.objectContaining({
+        parse_type: 1,
+        parser_id: 'builtin-parser',
+        pipeline_id: '',
+      }),
+    );
+  });
+
   it('makes the extractor metadata group authoritative over the stale top-level copy', async () => {
     const { handleSave, saveKnowledgeConfiguration } = setup();
 

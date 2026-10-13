@@ -10,6 +10,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router';
 import { z } from 'zod';
 import { formSchema } from './form-schema';
+import { DocumentParserType, ParseType } from '@/constants/knowledge';
 
 // The value that does not need to be displayed in the analysis method Select
 const HiddenFields = ['email', 'picture', 'audio', 'resume'];
@@ -36,7 +37,7 @@ export const useFetchKnowledgeConfigurationOnMount = (
   useEffect(() => {
     const parser_config = {
       ...form.formState?.defaultValues?.parser_config,
-      ...knowledgeDetails.parser_config,
+      ...(knowledgeDetails.pipeline_id ? {} : knowledgeDetails.parser_config),
     };
     const formValues = {
       ...pick({ ...knowledgeDetails, parser_config: parser_config }, [
@@ -50,7 +51,11 @@ export const useFetchKnowledgeConfigurationOnMount = (
         'avatar',
       ]),
       embedding_model: knowledgeDetails.embedding_model,
-      chunk_method: knowledgeDetails.chunk_method,
+      chunk_method: knowledgeDetails.pipeline_id
+        ? DocumentParserType.Naive
+        : knowledgeDetails.chunk_method || DocumentParserType.Naive,
+      parse_type: ParseType.BuiltIn,
+      pipeline_id: '',
     } as z.infer<typeof formSchema>;
     form.reset(formValues);
   }, [form, knowledgeDetails]);

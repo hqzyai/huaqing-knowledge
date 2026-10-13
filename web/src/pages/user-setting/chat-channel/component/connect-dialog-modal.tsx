@@ -17,7 +17,6 @@
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal/modal';
 import { RAGFlowSelect } from '@/components/ui/select';
-import { useFetchAllAgentList } from '@/hooks/use-agent-request';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -38,7 +37,6 @@ const ConnectDialogModal = ({
 }) => {
   const { t } = useTranslation();
   const { dialogs } = useChatChannelDialogList();
-  const { data: agents } = useFetchAllAgentList();
   const { connect, connecting } = useConnectChatChannelDialog();
   const [targetValue, setTargetValue] = useState<string | undefined>(
     channel?.agent_id
@@ -60,14 +58,16 @@ const ConnectDialogModal = ({
         label: `[${t('setting.chatChannelAssistant')}] ${d.name}`,
         value: toChatChannelTargetValue('chat', d.id)!,
       })),
-      ...(agents || [])
-        .filter((agent) => 'title' in agent)
-        .map((agent) => ({
-          label: `[${t('setting.chatChannelAgent')}] ${agent.title}`,
-          value: toChatChannelTargetValue('agent', agent.id)!,
-        })),
+      ...(channel?.agent_id
+        ? [
+            {
+              label: `[${t('setting.chatChannelAgent')}] ${channel.agent_name || channel.agent_id}`,
+              value: toChatChannelTargetValue('agent', channel.agent_id)!,
+            },
+          ]
+        : []),
     ],
-    [agents, dialogs, t],
+    [channel?.agent_id, channel?.agent_name, dialogs, t],
   );
 
   const handleConfirm = async () => {

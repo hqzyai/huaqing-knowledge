@@ -168,15 +168,17 @@ export function ChatSettings({ hasSingleChatBox }: ChatSettingsProps) {
   return (
     <>
       {settingVisible || (
-        <div className="p-5">
+        <div className="p-3">
           <Button
             onClick={switchSettingVisible}
             disabled={!hasSingleChatBox}
             variant={'ghost'}
-            size="icon-sm"
+            size="sm"
+            title={t('chat.chatSetting')}
             data-testid="chat-settings"
           >
             <LucideSettings />
+            <span className="hidden xl:inline">{t('chat.chatSetting')}</span>
           </Button>
         </div>
       )}
@@ -200,10 +202,7 @@ export function ChatSettings({ hasSingleChatBox }: ChatSettingsProps) {
                 onClick={switchSettingVisible}
                 data-testid="chat-detail-settings-close"
               >
-                <LucidePanelRightClose
-                  className="size-4 cursor-pointer"
-                  onClick={switchSettingVisible}
-                />
+                <LucidePanelRightClose className="size-4 cursor-pointer" />
               </Button>
             </div>
 

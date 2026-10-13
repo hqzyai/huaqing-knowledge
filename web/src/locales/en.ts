@@ -1,5 +1,17 @@
 export default {
   translation: {
+    workspace: {
+      settings: 'Models & settings',
+      title: 'Knowledge workspace',
+      description:
+        'Manage company knowledge, validate retrieval, and ground every answer in evidence.',
+      createDataset: 'Create dataset',
+      startChat: 'Chat with knowledge',
+      search: 'Search knowledge',
+      files: 'Manage files',
+      details: 'Document details',
+      download: 'Download original',
+    },
     common: {
       confirm: 'Confirm',
       back: 'Back',
@@ -472,7 +484,7 @@ Example: A 1 KB message with 1024-dim embedding uses ~9 KB. The 5 MB default lim
       artifact: 'Artifact',
       toSkills: 'To skills',
       processingType: 'Processing type',
-      dataPipeline: 'Switch or configure ingestion pipeline.',
+      dataPipeline: 'Parsing settings',
       dataPipelineTitle: 'Ingestion pipeline',
       operations: 'Operations',
       taskId: 'Task ID',
@@ -643,6 +655,9 @@ Example: A 1 KB message with 1024-dim embedding uses ~9 KB. The 5 MB default lim
       reRankModelWaring: 'Re-rank model is very time consuming.',
     },
     knowledgeConfiguration: {
+      builtinParsing: 'Built-in parsing settings',
+      builtinSwitchNotice:
+        'This configuration uses a custom pipeline. Saving will switch to built-in parsing. Review the parser and its settings before saving.',
       randomSeedTip:
         'Seed is the starting point for a pseudo-random algorithm that ensures reproducibility of the same output across different runs.',
       datasetDescription: 'Describe your dataset',
@@ -708,12 +723,12 @@ Example: A 1 KB message with 1024-dim embedding uses ~9 KB. The 5 MB default lim
       editLinkDataPipeline: 'Edit ingestion pipeline',
       linkPipelineSetTip: 'Manage ingestion pipeline linkage with this dataset',
       default: 'Default',
-      dataPipeline: 'Switch or configure ingestion pipeline.',
+      dataPipeline: 'Parsing settings',
       linkDataPipeline: 'Link ingestion pipeline',
       enableAutoGenerate: 'Enable auto generate',
       teamPlaceholder: 'Please select a team.',
       dataFlowPlaceholder: 'Please select a pipeline.',
-      buildItFromScratch: 'Build it from scratch',
+      buildItFromScratch: 'Manage pipelines (new tab)',
       dataFlow: 'Pipeline',
       parseType: 'Parse type',
       manualSetup: 'Pipeline',

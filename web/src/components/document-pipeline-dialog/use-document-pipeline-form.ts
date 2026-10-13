@@ -28,7 +28,7 @@ import {
 } from '@/utils/pipeline-operator';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isEqual } from 'lodash';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
@@ -51,7 +51,7 @@ export function useDocumentPipelineForm({
     () =>
       z
         .object({
-          parseType: z.nativeEnum(ParseType),
+          parseType: z.literal(ParseType.BuiltIn),
           parser_id: z.string(),
           pipeline_id: z.string().optional(),
           parser_config: z.record(z.string(), z.any()).optional(),
@@ -64,13 +64,6 @@ export function useDocumentPipelineForm({
               code: 'custom',
             });
           }
-          if (data.parseType === ParseType.Pipeline && !data.pipeline_id) {
-            ctx.addIssue({
-              path: ['pipeline_id'],
-              message: t('common.pleaseSelect'),
-              code: 'custom',
-            });
-          }
           addParserConfigIssues(data.parser_config, ctx, t);
         }),
     [t],
@@ -79,40 +72,22 @@ export function useDocumentPipelineForm({
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      parseType: pipelineId ? ParseType.Pipeline : ParseType.BuiltIn,
-      parser_id: parserId || '',
-      pipeline_id: pipelineId || '',
-      parser_config: transformSavedParserConfigToForm(parserConfig),
+      parseType: ParseType.BuiltIn,
+      parser_id: pipelineId ? '' : parserId || '',
+      pipeline_id: '',
+      parser_config: pipelineId
+        ? {}
+        : transformSavedParserConfigToForm(parserConfig),
     },
   });
 
-  const parseType = useWatch({
-    control: form.control,
-    name: 'parseType',
-  });
-  const selectedDataFlowId = useWatch({
-    control: form.control,
-    name: 'pipeline_id',
-  });
   const selectedBuiltinId = useWatch({
     control: form.control,
     name: 'parser_id',
   });
 
-  const isPipelineMode = parseType === ParseType.Pipeline;
-  const selectedPipelineId = isPipelineMode
-    ? selectedDataFlowId
-    : selectedBuiltinId;
-  // The saved parser_config only belongs to the pipeline (and parse type) it
-  // was saved with — expose its id only while that exact pipeline is selected,
-  // so that after switching, defaults come purely from the new pipeline's DSL.
-  const savedParseType = pipelineId ? ParseType.Pipeline : ParseType.BuiltIn;
-  const savedPipelineId =
-    parseType === savedParseType
-      ? isPipelineMode
-        ? pipelineId
-        : parserId
-      : undefined;
+  const selectedPipelineId = selectedBuiltinId;
+  const savedPipelineId = pipelineId ? undefined : parserId;
 
   const { operatorNodes, loading: operatorNodesLoading } =
     usePipelineOperatorNodes(
@@ -120,7 +95,7 @@ export function useDocumentPipelineForm({
       selectedPipelineId && selectedPipelineId === savedPipelineId
         ? parserConfig
         : undefined,
-      !isPipelineMode,
+      true,
     );
 
   useResetParserConfigOnPipelineChange(
@@ -131,12 +106,6 @@ export function useDocumentPipelineForm({
   );
 
   const { activeTab, setActiveTab } = useActiveTab(operatorNodes);
-
-  useEffect(() => {
-    if (parseType === ParseType.BuiltIn) {
-      form.setValue('pipeline_id', '');
-    }
-  }, [parseType, form]);
 
   const handleOperatorValuesChange = useCallback(
     (operatorId: string, values: any) => {
@@ -160,10 +129,7 @@ export function useDocumentPipelineForm({
     name: 'parser_config',
   });
 
-  const showOperatorTabs =
-    operatorNodes.length > 0 &&
-    ((parseType === ParseType.Pipeline && !!selectedDataFlowId) ||
-      (parseType === ParseType.BuiltIn && !!selectedBuiltinId));
+  const showOperatorTabs = operatorNodes.length > 0 && !!selectedBuiltinId;
 
   const buildSubmitData = useCallback(
     (data: z.infer<typeof FormSchema>): IChangeParserRequestBody => {
@@ -177,12 +143,11 @@ export function useDocumentPipelineForm({
         );
       }
 
-      const isPipeline = data.parseType === ParseType.Pipeline;
       return {
-        parser_id: isPipeline ? '' : data.parser_id,
-        pipeline_id: isPipeline ? data.pipeline_id : '',
+        parser_id: data.parser_id,
+        pipeline_id: '',
         parser_config: transformedConfig,
-        parseType: data.parseType,
+        parseType: ParseType.BuiltIn,
       };
     },
     [],
@@ -190,7 +155,6 @@ export function useDocumentPipelineForm({
 
   return {
     form,
-    parseType,
     operatorNodes,
     operatorNodesLoading,
     activeTab,
