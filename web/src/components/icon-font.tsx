@@ -17,7 +17,33 @@
 import { FileIconMap } from '@/constants/file';
 import { cn } from '@/lib/utils';
 import { getExtension } from '@/utils/document-util';
-import { File as LucideFile } from 'lucide-react';
+import {
+  File as LucideFile,
+  Database,
+  Search,
+  Folder,
+  Play,
+  RefreshCw,
+  Network,
+  Workflow,
+  Plug,
+  HousePlus,
+  ListFilter,
+  MessageSquare,
+  Repeat,
+  GitBranch,
+  Code,
+  Bot,
+  Hourglass,
+  TextCursorInput,
+  NotebookPen,
+  DatabaseZap,
+  Globe,
+  Mail,
+  List,
+  Variable,
+  Combine,
+} from 'lucide-react';
 import { CSSProperties } from 'react';
 import SvgIcon, { hasSvgIcon } from './svg-icon';
 
@@ -27,17 +53,59 @@ type IconFontType = {
   style?: CSSProperties;
 };
 
-export const IconFont = ({ name, className, style }: IconFontType) => (
-  <svg className={cn('size-4', className)} style={style}>
-    <use xlinkHref={`#icon-${name}`} />
-  </svg>
-);
+const InterfaceIcons = {
+  data: Database,
+  search: Search,
+  'file-sub': Folder,
+  play: Play,
+  reparse: RefreshCw,
+  knowledgegraph: Network,
+  'dataflow-01': Workflow,
+  mcp: Plug,
+  KR: Search,
+  'house-plus': HousePlus,
+  'a-QuestionClassification': ListFilter,
+  reply: MessageSquare,
+  loop: Repeat,
+  condition: GitBranch,
+  'code-set': Code,
+  'agent-ai': Bot,
+  await: Hourglass,
+  'a-textprocessing': TextCursorInput,
+  'notebook-pen': NotebookPen,
+  'executesql-0': DatabaseZap,
+  'httprequest-0': Globe,
+  'sendemail-0': Mail,
+  'a-listoperations': List,
+  'a-ariableassigner': Variable,
+  aggregator: Combine,
+};
+
+export const IconFont = ({ name, className, style }: IconFontType) => {
+  const Icon = InterfaceIcons[name as keyof typeof InterfaceIcons];
+  if (Icon)
+    return (
+      <Icon
+        className={cn('size-4', className)}
+        style={style}
+        aria-hidden="true"
+      />
+    );
+  return (
+    <svg className={cn('size-4', className)} style={style}>
+      <use xlinkHref={`#icon-${name}`} />
+    </svg>
+  );
+};
 
 export function IconFontFill({
   name,
   className,
   isFill = true,
 }: IconFontType & { isFill?: boolean }) {
+  const Icon = InterfaceIcons[name as keyof typeof InterfaceIcons];
+  if (Icon)
+    return <Icon className={cn('size-4', className)} aria-hidden="true" />;
   return (
     <svg
       className={cn('size-4', className)}

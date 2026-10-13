@@ -8,13 +8,13 @@ const Table = React.forwardRef<
 >(({ className, rootClassName, ...props }, ref) => (
   <div
     className={cn(
-      'relative w-full overflow-auto rounded-2xl bg-bg-card scrollbar-auto',
+      'relative w-full overflow-auto rounded-xl bg-bg-card scrollbar-auto',
       rootClassName,
     )}
   >
     <table
       ref={ref}
-      className={cn('w-full caption-bottom text-sm ', className)}
+      className={cn('w-full caption-bottom text-ui-body ', className)}
       {...props}
     />
   </div>
@@ -28,7 +28,7 @@ const TableHeader = React.forwardRef<
   <thead
     ref={ref}
     className={cn(
-      '[&_tr]:border-b-0.5 top-0 sticky bg-bg-title z-10',
+      '[&_tr]:border-b top-0 sticky bg-bg-title z-10',
       className,
     )}
     {...props}
@@ -55,7 +55,7 @@ const TableFooter = React.forwardRef<
   <tfoot
     ref={ref}
     className={cn(
-      'border-t-0.5 border-border-button bg-muted/50 font-medium [&>tr]:last:border-b-0',
+      'border-t border-border-button bg-muted/50 font-medium [&>tr]:last:border-b-0',
       className,
     )}
     {...props}
@@ -70,7 +70,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      'border-b-0.5 border-border-button transition-colors hover:bg-bg-card data-[state=selected]:bg-bg-card',
+      'border-b border-border-button transition-colors hover:bg-accent data-[state=selected]:bg-accent',
       className,
     )}
     {...props}
@@ -85,7 +85,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      'first-of-type:pl-6 last-of-type:pr-6 h-14 px-4 text-left align-middle font-normal text-text-secondary [&:has([role=checkbox])]:pr-0 ',
+      'first-of-type:pl-6 last-of-type:pr-6 h-11 px-3 text-left align-middle font-medium text-text-secondary [&:has([role=checkbox])]:pr-0 ',
       className,
     )}
     {...props}
@@ -100,7 +100,7 @@ const TableCell = React.forwardRef<
   <td
     ref={ref}
     className={cn(
-      'first-of-type:pl-6 last-of-type:pr-6 px-4 py-3 align-middle [&:has([role=checkbox])]:pr-0 text-text-primary font-normal',
+      'first-of-type:pl-6 last-of-type:pr-6 px-3 py-2.5 align-middle [&:has([role=checkbox])]:pr-0 text-text-primary font-normal',
       className,
     )}
     {...props}

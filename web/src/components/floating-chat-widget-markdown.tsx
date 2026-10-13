@@ -36,7 +36,7 @@ import { citationMarkerReg } from '@/utils/citation-utils';
 import { getExtension } from '@/utils/document-util';
 import { supportsSourceLocate } from '@/utils/source-locate';
 import { getDirAttribute } from '@/utils/text-direction';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { Info as InfoCircleOutlined } from 'lucide-react';
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';

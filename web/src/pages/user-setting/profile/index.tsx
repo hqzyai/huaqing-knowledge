@@ -155,7 +155,7 @@ const ProfilePage: FC = () => {
     <ProfileSettingWrapperCard
       header={
         <header>
-          <h2 className="text-2xl font-medium text-text-primary">
+          <h2 className="text-page-title text-text-primary">
             {t('profile')}
           </h2>
           <p className="mt-1 text-sm text-text-secondary ">

@@ -14,16 +14,21 @@
  *  limitations under the License.
  */
 
-@import url(./inter.less);
-
 :root {
-  --font-sans: 'Inter';
+  --font-sans: 'Geist Variable', 'Noto Sans SC Variable', sans-serif;
+  --font-mono: 'Geist Mono Variable', 'Noto Sans SC Variable', monospace;
 }
 
-@supports (font-variation-settings: normal) {
-  :root {
-    --font-sans: 'InterVariable';
-  }
+body {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+  font-synthesis: none;
+}
+
+/* Keep the Lucide stroke constant when existing callers size the SVG with CSS. */
+.lucide > :is(path, circle, rect, line, polyline, polygon, ellipse) {
+  vector-effect: non-scaling-stroke;
 }
 
 html,

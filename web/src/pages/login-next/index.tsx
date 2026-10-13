@@ -387,7 +387,7 @@ const Login = () => {
             </div>
             <div className="text-xl font-bold self-center">Agentos-RAG</div>
           </div>
-          <h1 className="text-[36px] font-medium  text-center mb-2">
+          <h1 className="text-page-title  text-center mb-2">
             {t('title')}
           </h1>
         </div>

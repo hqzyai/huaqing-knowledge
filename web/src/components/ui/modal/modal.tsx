@@ -6,6 +6,7 @@ import React, { FC, ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 import { DialogDescription } from '../dialog';
+import { buttonVariants } from '../button';
 import { createPortalModal } from './modal-manage';
 
 export interface ModalProps {
@@ -53,11 +54,11 @@ export interface ModalType extends FC<ModalProps> {
 }
 
 const typeIcons = {
-  warning: <AlertCircle className="w-6 h-6 text-yellow-500" />,
-  info: <Info className="w-6 h-6 text-blue-500" />,
-  success: <CheckCircle className="w-6 h-6 text-green-500" />,
-  error: <AlertCircle className="w-6 h-6 text-red-500" />,
-  confirm: <AlertCircle className="w-6 h-6 text-yellow-500" />,
+  warning: <AlertCircle className="size-6 text-state-warning" />,
+  info: <Info className="size-6 text-text-primary" />,
+  success: <CheckCircle className="size-6 text-state-success" />,
+  error: <AlertCircle className="size-6 text-destructive" />,
+  confirm: <AlertCircle className="size-6 text-state-warning" />,
 };
 
 const Modal: ModalType = ({
@@ -145,7 +146,7 @@ const Modal: ModalType = ({
               type="button"
               onClick={() => handleCancel()}
               className={cn(
-                'px-2 py-1 border border-border-button rounded-md hover:bg-bg-card hover:text-text-primary ',
+                buttonVariants({ variant: 'outline' }),
                 cancelButtonClassName,
               )}
             >
@@ -158,7 +159,7 @@ const Modal: ModalType = ({
             onClick={() => handleOk()}
             data-testid={okButtonTestId}
             className={cn(
-              'px-2 py-1 bg-primary text-primary-foreground rounded-md hover:bg-primary/90',
+              buttonVariants(),
               { 'cursor-not-allowed': disabled },
               okButtonClassName,
             )}
@@ -205,7 +206,7 @@ const Modal: ModalType = ({
           <div className="flex-shrink-0 mt-0.5">{typeIcons[type]}</div>
           <div className="flex-1">
             {title && (
-              <DialogPrimitive.Title className="text-lg font-medium text-foreground mb-2">
+              <DialogPrimitive.Title className="text-card-title text-foreground mb-2">
                 {title}
               </DialogPrimitive.Title>
             )}
@@ -221,13 +222,13 @@ const Modal: ModalType = ({
     <DialogPrimitive.Root open={open} onOpenChange={handleChange}>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
-          className="fixed inset-0 z-[1000] bg-bg-card backdrop-blur-[1px] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[1000] bg-[var(--ui-overlay)] flex items-center justify-center p-4"
           onClick={() => maskClosable && onOpenChange?.(false)}
           style={{ zIndex: zIndex }}
         >
           <DialogPrimitive.Content
             className={cn(
-              `relative w-[700px] ${full ? 'max-w-full' : sizeClasses[size]} ${className} bg-bg-base rounded-lg shadow-lg border border-border-default transition-all focus-visible:!outline-none`,
+              `relative w-[700px] ${full ? 'max-w-full' : sizeClasses[size]} ${className} bg-bg-base rounded-3xl shadow-modal border border-border-default transition-colors focus-visible:!outline-none`,
               { 'pt-10': closable && !title && !type },
             )}
             data-testid={testId}
@@ -243,7 +244,7 @@ const Modal: ModalType = ({
                 )}
               >
                 {title && (
-                  <DialogPrimitive.Title className="text-lg font-medium text-foreground w-full">
+                  <DialogPrimitive.Title className="text-card-title text-foreground w-full">
                     {title}
                   </DialogPrimitive.Title>
                 )}
@@ -253,7 +254,7 @@ const Modal: ModalType = ({
               <DialogPrimitive.Close asChild>
                 <button
                   type="button"
-                  className="flex absolute end-5 top-5 h-7 w-7 items-center justify-center text-text-secondary rounded-full hover:text-text-primary focus-visible:outline-none"
+                  className="flex absolute end-5 top-5 h-7 w-7 items-center justify-center text-text-secondary rounded hover:text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                   onClick={handleCancel}
                 >
                   {closeIcon}

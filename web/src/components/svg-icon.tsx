@@ -19,6 +19,15 @@ import { cn } from '@/lib/utils';
 import Icon from '@ant-design/icons';
 import { IconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import { memo, useMemo } from 'react';
+import {
+  Bot,
+  Database,
+  MessageSquare,
+  Search,
+  Brain,
+  Sparkles,
+  Folder,
+} from 'lucide-react';
 import { IconFontFill } from './icon-font';
 import { RAGFlowAvatar } from './ragflow-avatar';
 import { useIsDarkTheme } from './theme-provider';
@@ -175,8 +184,28 @@ export const HomeIcon = ({
   width?: string | number;
   imgClass?: string;
 }) => {
+  const icons = {
+    agents: Bot,
+    datasets: Database,
+    chats: MessageSquare,
+    searches: Search,
+    memory: Brain,
+    skills: Sparkles,
+    file: Folder,
+  };
+  const InterfaceIcon = icons[name as keyof typeof icons];
   const isDark = useIsDarkTheme();
   const icon = isDark ? name : `${name}-bri`;
+
+  if (InterfaceIcon) {
+    return (
+      <InterfaceIcon
+        size={Number(width) || 24}
+        className={cn('inline-block shrink-0', imgClass)}
+        aria-hidden="true"
+      />
+    );
+  }
 
   return icon ? (
     <SvgIcon

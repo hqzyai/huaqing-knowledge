@@ -49,7 +49,7 @@ export function WikiDetailHeader({
       )}
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-semibold text-text-primary">
+          <h1 className="text-page-title text-text-primary">
             {title ?? displayedArtifact?.title}
           </h1>
           <div className="flex items-center gap-2">

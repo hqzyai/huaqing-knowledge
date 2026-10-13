@@ -69,7 +69,7 @@ export default function SearchHome({
           <div className="flex w-full flex-col">
             {!isSearching && (
               <>
-                <h2 className="mb-3 text-2xl font-semibold">
+                <h2 className="mb-3 text-section-title">
                   {t('workspace.search')}
                 </h2>
                 <p className="mb-6 text-sm leading-6 text-text-secondary">

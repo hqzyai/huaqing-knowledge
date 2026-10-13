@@ -28,13 +28,13 @@ import { downloadAgentFile } from '@/services/file-manager-service';
 import { removeThinkSection } from '@/utils/chat';
 import { downloadFileFromBlob } from '@/utils/file-util';
 import {
-  DeleteOutlined,
-  DislikeOutlined,
-  LikeOutlined,
-  PauseCircleOutlined,
-  SoundOutlined,
-  SyncOutlined,
-} from '@ant-design/icons';
+  Trash2 as DeleteOutlined,
+  ThumbsDown as DislikeOutlined,
+  ThumbsUp as LikeOutlined,
+  CirclePause as PauseCircleOutlined,
+  Volume2 as SoundOutlined,
+  RefreshCw as SyncOutlined,
+} from 'lucide-react';
 import { Download, NotebookText } from 'lucide-react';
 import { useCallback, useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -226,7 +226,7 @@ export const UserGroupButton = ({
         >
           <Tooltip>
             <TooltipTrigger asChild>
-              <SyncOutlined spin={sendLoading} />
+              <SyncOutlined className={sendLoading ? 'animate-spin' : undefined} />
             </TooltipTrigger>
             <TooltipContent>{t('chat.regenerate')}</TooltipContent>
           </Tooltip>
@@ -236,7 +236,7 @@ export const UserGroupButton = ({
         <ToggleGroupItem value="c" onClick={onRemoveMessage} disabled={loading}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <DeleteOutlined spin={loading} />
+              <DeleteOutlined className={loading ? 'animate-spin' : undefined} />
             </TooltipTrigger>
             <TooltipContent>{t('common.delete')}</TooltipContent>
           </Tooltip>

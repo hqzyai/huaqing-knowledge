@@ -15,9 +15,13 @@
  */
 
 import React from 'react';
+import { LucideProvider } from 'lucide-react';
 import { Inspector } from 'react-dev-inspector';
 import ReactDOM from 'react-dom/client';
 import '../tailwind.css';
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import '@fontsource-variable/noto-sans-sc';
 import App from './app';
 import './global.less';
 import { initLanguage } from './locales/config';
@@ -30,7 +34,9 @@ Promise.all([initLanguage(), fetchBackendLanguage()]).then(() => {
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       <Inspector keys={['alt', 'c']} />
-      <App />
+      <LucideProvider size={20} strokeWidth={1.75}>
+        <App />
+      </LucideProvider>
     </React.StrictMode>,
   );
 });

@@ -55,7 +55,7 @@ export function Applications() {
   return (
     <section className="mt-8 border-t border-border-button pt-6">
       <header className="flex justify-between items-center mb-2.5">
-        <h2 className="text-xl font-semibold">
+        <h2 className="text-section-title">
           <HomeIcon
             imgClass="me-2.5"
             name={`${IconMap[val as keyof typeof IconMap]}`}

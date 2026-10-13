@@ -8,8 +8,8 @@ import { Link, LinkProps } from 'react-router';
 
 const buttonVariants = cva(
   cn(
-    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-colors outline-none',
-    'disabled:pointer-events-none disabled:opacity-50 rounded border-0.5 border-transparent',
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-ui-control font-medium transition-colors duration-[120ms] motion-reduce:transition-none outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+    'disabled:pointer-events-none disabled:opacity-50 border border-transparent shadow-none',
     '[&_svg]:pointer-events-none [&_svg:not([class*="size-"])]:size-4 shrink-0 [&_svg]:shrink-0',
   ),
   {
@@ -18,12 +18,11 @@ const buttonVariants = cva(
         // Solid variant series:
         // Button has its own background color, may have borders
         default:
-          'bg-text-primary text-bg-base shadow-xs hover:bg-text-primary/90 focus-visible:bg-text-primary/90',
+          'bg-primary text-primary-foreground hover:bg-[var(--ui-primary-hover)] active:bg-[var(--ui-primary-active)]',
 
         secondary: `
-          bg-bg-card
-          hover:text-text-primary hover:bg-border-button
-          focus-visible:text-text-primary focus-visible:bg-border-button
+          bg-secondary text-secondary-foreground
+          hover:bg-[var(--ui-subtle-hover)] active:bg-[var(--ui-subtle-active)]
         `,
 
         highlighted: `
@@ -32,21 +31,20 @@ const buttonVariants = cva(
         `,
 
         accent: `
-          bg-accent-primary text-white
-          hover:bg-accent-primary/90 focus-visible:bg-accent-primary/90
+          bg-primary text-primary-foreground
+          hover:bg-[var(--ui-primary-hover)] active:bg-[var(--ui-primary-active)]
         `,
 
         destructive: `
-          bg-state-error text-white shadow-xs
-          hover:bg-state-error/90 focus-visible:ring-state-error/20 dark:focus-visible:ring-state-error/40
+          bg-destructive text-destructive-foreground
+          hover:bg-[var(--ui-destructive-hover)] active:bg-[var(--ui-destructive-active)]
         `,
 
         // Outline variant series
         // Button has transparent or greyish background, may have borders
         outline: `
-          text-text-secondary bg-bg-input border-0.5 border-border-button
-          hover:text-text-primary hover:bg-border-button hover:border-border-default
-          focus-visible:text-text-primary focus-visible:bg-border-button focus-visible:border-border-button
+          text-text-primary bg-bg-base border border-input
+          hover:bg-[var(--ui-outline-hover)] active:bg-[var(--ui-outline-active)]
         `, // light: bg=transparent, dark: bg-input
 
         dashed: `
@@ -101,14 +99,14 @@ const buttonVariants = cva(
 
         xl: 'h-12 rounded-xl px-5 gap-3',
         lg: 'h-10 rounded-lg px-4',
-        default: 'h-8 rounded px-3',
-        sm: 'h-7 rounded-sm px-2 gap-1',
+        default: 'min-h-9 rounded px-3 py-2',
+        sm: 'min-h-8 rounded px-2 py-1.5 gap-2',
         xs: 'h-6 rounded-xs px-1 gap-0.5',
 
         'icon-xl': 'size-12 rounded-xl',
         'icon-lg': 'size-10 rounded-lg',
-        icon: 'size-8 rounded',
-        'icon-sm': 'size-7 rounded-sm',
+        icon: 'min-h-9 min-w-9 rounded p-2',
+        'icon-sm': 'min-h-8 min-w-8 rounded p-1.5',
         'icon-xs': 'size-6 rounded-xs',
       },
     },

@@ -25,13 +25,13 @@ import {
 import { IconFont } from '@/components/icon-font';
 import { LLMFactory } from '@/constants/llm';
 import { UserSettingRouteKey } from '@/constants/setting';
-import { MonitorOutlined } from '@ant-design/icons';
+import { Monitor as MonitorOutlined } from 'lucide-react';
 
 export const UserSettingIconMap = {
   [UserSettingRouteKey.Profile]: <ProfileIcon />,
   [UserSettingRouteKey.Password]: <PasswordIcon />,
   [UserSettingRouteKey.Model]: <ModelProviderIcon />,
-  [UserSettingRouteKey.System]: <MonitorOutlined style={{ fontSize: 24 }} />,
+  [UserSettingRouteKey.System]: <MonitorOutlined size={24} />,
   [UserSettingRouteKey.Team]: <TeamIcon />,
   [UserSettingRouteKey.Logout]: <LogOutIcon />,
   [UserSettingRouteKey.Api]: <ApiIcon />,

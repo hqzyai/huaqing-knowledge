@@ -54,7 +54,7 @@ const UserSettingTeam = () => {
     <ProfileSettingWrapperCard
       header={
         <header>
-          <h2 className="text-2xl font-medium text-text-primary">
+          <h2 className="text-page-title text-text-primary">
             {userInfo?.nickname + ' ' + t('setting.workspace')}
           </h2>
         </header>

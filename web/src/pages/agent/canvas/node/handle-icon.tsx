@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { Plus as PlusOutlined } from 'lucide-react';
 import { CSSProperties } from 'react';
 
 export const HandleIcon = () => {

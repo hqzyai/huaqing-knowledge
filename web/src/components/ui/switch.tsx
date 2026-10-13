@@ -14,9 +14,9 @@ const Switch = React.forwardRef<
   return (
     <SwitchPrimitives.Root
       className={cn(
-        'group/switch inline-flex h-4 w-7 shrink-0 cursor-pointer items-center rounded-full',
+        'group/switch inline-flex h-[18px] w-8 shrink-0 cursor-pointer items-center rounded-full',
         'border-2 border-transparent overflow-hidden transition-colors',
-        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary',
+        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         'disabled:cursor-not-allowed disabled:opacity-50',
         'data-[state=checked]:bg-accent-primary data-[state=unchecked]:bg-text-sub-title',
         className,
@@ -31,10 +31,10 @@ const Switch = React.forwardRef<
     >
       <SwitchPrimitives.Thumb
         className="
-        pointer-events-none block w-3 h-3 rounded-full bg-white shadow-lg ring-0 transition-all ease-out
+        pointer-events-none block size-3.5 rounded-full bg-primary-foreground shadow-none ring-0 transition-[width,transform] ease-out motion-reduce:transition-none
         group-hover/switch:w-4 group-focus-visible/switch:w-4
-        data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0
-        group-hover/switch:data-[state=checked]:translate-x-2 group-focus-visible/switch:data-[state=checked]:translate-x-2
+        data-[state=checked]:translate-x-3.5 data-[state=unchecked]:translate-x-0
+        group-hover/switch:data-[state=checked]:translate-x-3 group-focus-visible/switch:data-[state=checked]:translate-x-3
       "
       />
     </SwitchPrimitives.Root>

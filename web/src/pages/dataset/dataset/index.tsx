@@ -160,7 +160,7 @@ export default function Dataset() {
           className="items-end"
           leftPanel={
             <div>
-              <h1 className="leading-normal font-medium">
+              <h1 className="text-page-title">
                 {t('knowledgeDetails.subbarFiles')}
               </h1>
               <p className="text-text-secondary text-sm font-normal">

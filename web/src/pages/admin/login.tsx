@@ -144,7 +144,7 @@ function AdminLogin() {
             <span className="text-xl font-bold">Agentos-RAG</span>
           </div>
 
-          <h1 className="mt-[6.5rem] text-4xl font-medium text-center mb-12">
+          <h1 className="mt-[6.5rem] text-page-title text-center mb-12">
             {t('loginTitle', { keyPrefix: 'admin' })}
           </h1>
         </div>

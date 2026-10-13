@@ -26,7 +26,7 @@ export function Datasets() {
   return (
     <section>
       <header>
-        <h2 className="leading-8 text-xl font-semibold mb-4">
+        <h2 className="text-section-title mb-4">
           {/* <IconFont name="data" className="size-8"></IconFont> */}
           <HomeIcon imgClass="me-2.5" name="datasets" width={24} />
           {t('header.dataset')}

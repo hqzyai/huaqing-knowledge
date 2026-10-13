@@ -101,7 +101,7 @@ const DataSource = () => {
     <ProfileSettingWrapperCard
       header={
         <header>
-          <h2 className="text-2xl font-medium text-text-primary">
+          <h2 className="text-section-title text-text-primary">
             {t('setting.dataSources')}
           </h2>
           <p className="mt-1 text-sm text-text-secondary ">
@@ -125,7 +125,7 @@ const DataSource = () => {
         <section className="mt-8">
           <header className="flex flex-row items-center justify-between space-y-0 p-0 pb-4">
             {/* <Users className="mr-2 h-5 w-5 text-[#1677ff]" /> */}
-            <h2 className="text-2xl font-medium">
+            <h2 className="text-section-title">
               {t('setting.availableSources')}
               <div className="text-sm text-text-secondary font-normal mt-1.5">
                 {t('setting.availableSourcesDescription')}

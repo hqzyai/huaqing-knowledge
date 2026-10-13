@@ -112,7 +112,7 @@ export default function ListFilterBar({
         className,
       )}
     >
-      <h1 className="flex min-w-0 shrink-0 items-center gap-2.5 text-2xl font-semibold">
+      <h1 className="flex min-w-0 shrink-0 items-center gap-2 text-page-title">
         {typeof icon === 'string' ? (
           <HomeIcon
             name={`${icon}`}

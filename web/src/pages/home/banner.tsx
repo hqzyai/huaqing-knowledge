@@ -21,7 +21,7 @@ export function NextBanner() {
     <section className="space-y-6 border-b border-border-button pb-6">
       <div className="flex flex-wrap items-center justify-between gap-5">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-text-primary">
+          <h1 className="text-page-title text-text-primary">
             {t('workspace.title')}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">

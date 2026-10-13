@@ -32,9 +32,9 @@ const RadioGroupItem = React.forwardRef<
       data-slot="radio-group-item"
       className={cn(
         'text-primary aspect-square size-4 shrink-0 rounded-full',
-        'transition-all outline-none border border-border-button bg-bg-component',
+        'transition-colors motion-reduce:transition-none outline-none border border-input bg-bg-component',
         'hover:border-border-default hover:bg-border-default',
-        'focus-visible:border-border-default focus-visible:bg-border-default',
+        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         'aria-[invalid]:border-state-error aria-[invalid]:bg-state-error/5 aria-[invalid]:text-state-error',
         'disabled:cursor-not-allowed disabled:opacity-50',
         className,

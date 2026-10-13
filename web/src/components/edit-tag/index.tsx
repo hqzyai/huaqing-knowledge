@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-import { PlusOutlined } from '@ant-design/icons';
+import { Plus as PlusOutlined } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';

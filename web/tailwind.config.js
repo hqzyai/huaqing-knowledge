@@ -172,6 +172,20 @@ module.exports = {
       },
       fontFamily: {
         sans: ['var(--font-sans)', ...fontFamily.sans],
+        mono: ['var(--font-mono)', ...fontFamily.mono],
+      },
+      fontSize: {
+        'page-title': ['1.75rem', { lineHeight: '2.25rem', fontWeight: '600' }],
+        'section-title': ['1.25rem', { lineHeight: '1.75rem', fontWeight: '600' }],
+        'card-title': ['1rem', { lineHeight: '1.5rem', fontWeight: '600' }],
+        'ui-body': ['0.875rem', { lineHeight: '1.375rem' }],
+        'ui-control': ['0.875rem', { lineHeight: '1.25rem' }],
+        'ui-caption': ['0.75rem', { lineHeight: '1.125rem' }],
+        'ui-code': ['0.8125rem', { lineHeight: '1.25rem' }],
+      },
+      boxShadow: {
+        popover: 'var(--ui-shadow-popover)',
+        modal: 'var(--ui-shadow-modal)',
       },
       keyframes: {
         'accordion-down': {

@@ -144,7 +144,7 @@ function SystemSetting() {
   return (
     <article className="rounded-lg w-full">
       <header className="py-5 px-10">
-        <h2 className="text-2xl font-medium text-text-primary">
+        <h2 className="text-section-title text-text-primary">
           {t('systemModelSettings')}
         </h2>
         <p className="mt-1 text-sm text-text-secondary ">

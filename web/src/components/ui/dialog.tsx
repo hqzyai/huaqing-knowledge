@@ -21,7 +21,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-black/50 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      'fixed inset-0 z-50 bg-[var(--ui-overlay)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
       className,
     )}
     {...props}
@@ -38,11 +38,11 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'outline-none outline-0 fixed left-[50%] top-[50%] rounded-lg z-50 grid w-full max-w-xl translate-x-[-50%] translate-y-[-50%]',
+        'outline-none outline-0 fixed left-[50%] top-[50%] rounded-3xl z-50 grid w-[calc(100%-2rem)] max-w-[480px] translate-x-[-50%] translate-y-[-50%]',
         // TODO: to keep scrollbar perfectly aligned to header bottom and/or footer top,
         //       'gap-4' should be removed, then bring your own body container with padding-y instead.
         'gap-4',
-        'border-0.5 border-border-button bg-bg-base p-6 shadow-lg duration-200 sm:rounded-lg',
+        'border border-border-button bg-bg-base p-6 shadow-modal duration-200 sm:rounded-3xl',
         'data-[state=open]:animate-in data-[state=closed]:animate-out',
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
@@ -75,7 +75,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      '-mx-6 -mt-6 p-6 border-b-0.5 border-border-button',
+      '-mx-6 -mt-6 p-6 border-b border-border-button',
       'flex flex-col space-y-1.5 text-center sm:text-left',
       className,
     )}
@@ -106,7 +106,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      'text-lg font-semibold leading-none tracking-tight',
+      'text-card-title',
       className,
     )}
     {...props}

@@ -15,7 +15,7 @@ import { Input, InputProps } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { BlurTextarea } from '@/components/ui/textarea';
 import { useTranslate } from '@/hooks/common-hooks';
-import { PlusOutlined } from '@ant-design/icons';
+import { Plus as PlusOutlined } from 'lucide-react';
 import { useUpdateNodeInternals } from '@xyflow/react';
 import humanId from 'human-id';
 import trim from 'lodash/trim';

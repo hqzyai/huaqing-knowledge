@@ -32,8 +32,8 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-8 w-full items-center bg-bg-input justify-between rounded-md border-0.5 border-border-button',
-      'px-3 py-2 text-sm outline-none transition-colors text-text-secondary placeholder:text-muted-foreground',
+      'flex min-h-9 w-full items-center bg-bg-input justify-between rounded border border-input',
+      'px-3 py-2 text-ui-control outline-none transition-colors text-text-secondary placeholder:text-muted-foreground',
       'hover:text-text-primary hover:bg-border-button',
       'focus-visible:text-text-primary focus-visible:bg-border-button',
       'disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
@@ -101,7 +101,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border-0.5 border-border-card bg-bg-base text-popover-foreground shadow-md',
+        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-xl border border-border-button bg-bg-base text-popover-foreground shadow-popover',
         'data-[state=open]:animate-in data-[state=closed]:animate-out',
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
@@ -135,7 +135,7 @@ const SelectLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn('py-1.5 ps-8 pe-2 text-sm font-semibold', className)}
+    className={cn('py-1.5 ps-8 pe-2 text-ui-control font-medium', className)}
     {...props}
   />
 ));
@@ -148,7 +148,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 ps-2 pe-2 text-sm outline-none text-text-secondary',
+      'relative flex w-full cursor-default select-none items-center rounded py-1.5 ps-2 pe-2 text-ui-control outline-none text-text-secondary',
       'focus:bg-border-button focus:text-text-primary data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className,
     )}

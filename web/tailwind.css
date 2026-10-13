@@ -4,108 +4,108 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
+    --background: #ffffff;
+    --foreground: 0.000 0.000% 9.020%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0.000 0.000% 96.078%;
+    --muted-foreground: 0.000 0.000% 32.157%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
+    --popover: 0.000 0.000% 100.000%;
+    --popover-foreground: 0.000 0.000% 9.020%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 0.000 0.000% 83.137%;
+    --input: 0.000 0.000% 45.098%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
+    --card: 0.000 0.000% 100.000%;
+    --card-foreground: 0.000 0.000% 9.020%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0.000 0.000% 9.020%;
+    --primary-foreground: 0.000 0.000% 98.039%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0.000 0.000% 96.078%;
+    --secondary-foreground: 0.000 0.000% 9.020%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0.000 0.000% 96.078%;
+    --accent-foreground: 0.000 0.000% 9.020%;
 
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0.000 73.709% 41.765%;
+    --destructive-foreground: 0.000 0.000% 100.000%;
 
-    --ring: 215 20.2% 65.1%;
+    --ring: 0.000 0.000% 32.157%;
 
     --radius: 0.5rem;
 
-    --background-inverse-standard: rgba(230, 227, 246, 0.15);
-    --background-inverse-standard-foreground: rgb(92, 81, 81);
-    --colors-background-neutral-standard: white;
+    --background-inverse-standard: #ffffff;
+    --background-inverse-standard-foreground: #171717;
+    --colors-background-neutral-standard: #ffffff;
 
-    --button-blue-text: rgb(22, 119, 255);
+    --button-blue-text: #171717;
 
-    --colors-outline-sentiment-primary: rgba(127, 105, 255, 1);
-    --colors-outline-neutral-strong: rgba(112, 107, 107, 0.15);
-    --colors-outline-neutral-standard: rgba(53, 51, 65, 0.1);
+    --colors-outline-sentiment-primary: #525252;
+    --colors-outline-neutral-strong: #737373;
+    --colors-outline-neutral-standard: #d4d4d4;
 
-    --colors-text-neutral-strong: rgba(17, 16, 23, 1);
-    --colors-text-neutral-standard: rgba(152, 148, 176, 1);
+    --colors-text-neutral-strong: #171717;
+    --colors-text-neutral-standard: #525252;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0.000 0.000% 98.039%;
+    --sidebar-foreground: 0.000 0.000% 9.020%;
+    --sidebar-primary: 0.000 0.000% 9.020%;
+    --sidebar-primary-foreground: 0.000 0.000% 98.039%;
+    --sidebar-accent: 0.000 0.000% 96.078%;
+    --sidebar-accent-foreground: 0.000 0.000% 9.020%;
+    --sidebar-border: 0.000 0.000% 83.137%;
+    --sidebar-ring: 0.000 0.000% 32.157%;
 
-    --background-inverse-strong: rgba(255, 255, 255, 0.15);
+    --background-inverse-strong: #f5f5f5;
 
-    --text-badge: rgba(151, 154, 171, 1);
+    --text-badge: #525252;
 
-    --text-title: rgba(22, 22, 24, 1);
-    --text-sub-title: rgba(151, 154, 171, 1);
+    --text-title: #171717;
+    --text-sub-title: #525252;
     --text-sub-title-invert: rgba(91, 93, 106, 1);
 
-    --background-header-bar: rgba(0, 0, 0, 0.05);
+    --background-header-bar: #f5f5f5;
     --text-title-invert: rgba(255, 255, 255, 1);
-    --background-card: rgba(22, 22, 24, 0.05);
+    --background-card: #ffffff;
 
     --background-highlight: rgba(76, 164, 231, 0.1);
 
-    --input-border: rgba(22, 22, 24, 0.2);
+    --input-border: #737373;
 
     --metallic: #46464a;
 
-    --bg-title: #f6f6f7;
+    --bg-title: #f5f5f5;
     /* design colors */
 
     --bg-base: #ffffff;
     /* card color , dividing line */
-    --bg-card: rgba(0, 0, 0, 0.05);
+    --bg-card: #ffffff;
     --bg-component: #ffffff;
-    --bg-input: rgba(0, 0, 0, 0.05);
+    --bg-input: #ffffff;
     --bg-canvas: 246 246 247;
-    --bg-list: 246 246 247;
+    --bg-list: 245 245 245;
     /* Button ,Body text, Input completed text */
 
     /* #161618 */
-    --text-primary: 22 22 24;
-    --text-secondary: 117 120 122;
-    --text-disabled: #b2b5b7;
+    --text-primary: 23 23 23;
+    --text-secondary: 82 82 82;
+    --text-disabled: #525252;
     /* Input  default color */
-    --border-default: rgba(0, 0, 0, 0.2);
+    --border-default: #d4d4d4;
     /* Input accent color */
-    --border-accent: #000000;
-    --border-button: rgba(0, 0, 0, 0.1);
+    --border-accent: #525252;
+    --border-button: #d4d4d4;
     /* Regulators, parsing, switches, variables */
-    --accent-primary: 0 190 180;
+    --accent-primary: 23 23 23;
     /* Output Variables Box */
-    --bg-accent: rgba(76, 164, 231, 0.05);
+    --bg-accent: #f5f5f5;
 
     /* --state-success: #3ba05c; */
-    --state-success: 59 160 92;
+    --state-success: 22 101 52;
     /* --state-warning: #767573; */
-    --state-warning: 250 173 20;
-    --state-error: 216 73 75;
+    --state-warning: 146 64 14;
+    --state-error: 185 28 28;
 
     --team-group: #5ab77e;
     --team-member: #5c96c8;
@@ -115,104 +115,139 @@
     /* --*-inverse: colors in dark mode */
     --text-primary-inverse: 246 246 247;
     --text-secondary-inverse: 178 181 183;
+    --background-inverse-strong-foreground: #171717;
+    --ui-primary-hover: #303030;
+    --ui-primary-active: #404040;
+    --ui-subtle-hover: #eeeeee;
+    --ui-subtle-active: #e5e5e5;
+    --ui-outline-hover: #f5f5f5;
+    --ui-outline-active: #eeeeee;
+    --ui-destructive-hover: #991b1b;
+    --ui-destructive-active: #7f1d1d;
+    --ui-control-hover-border: #525252;
+    --ui-selected-background: #f5f5f5;
+    --ui-selected-foreground: #171717;
+    --ui-overlay: rgb(0 0 0 / 0.4);
+    --ui-shadow-popover: 0 4px 12px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.06);
+    --ui-shadow-modal: 0 16px 48px rgb(0 0 0 / 0.16), 0 4px 12px rgb(0 0 0 / 0.08);
   }
 
   .dark {
-    --background: rgba(11, 10, 18, 1);
-    --foreground: 213 31% 91%;
+    --background: #0a0a0a;
+    --foreground: 0.000 0.000% 98.039%;
 
-    --muted: 223 47% 11%;
-    --muted-foreground: 215.4 16.3% 56.9%;
+    --muted: 0.000 0.000% 14.902%;
+    --muted-foreground: 0.000 0.000% 63.922%;
 
-    --accent: 216 34% 17%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 0.000 0.000% 14.902%;
+    --accent-foreground: 0.000 0.000% 98.039%;
 
-    --popover: 224 71% 4%;
-    --popover-foreground: 215 20.2% 65.1%;
+    --popover: 0.000 0.000% 9.020%;
+    --popover-foreground: 0.000 0.000% 98.039%;
 
-    --border: 216 34% 17%;
-    --input: 216 34% 17%;
+    --border: 0.000 0.000% 25.098%;
+    --input: 0.000 0.000% 45.098%;
 
-    --card: 224 71% 4%;
-    --card-foreground: 213 31% 91%;
+    --card: 0.000 0.000% 9.020%;
+    --card-foreground: 0.000 0.000% 98.039%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 1.2%;
+    --primary: 0.000 0.000% 98.039%;
+    --primary-foreground: 0.000 0.000% 9.020%;
 
-    --secondary: 222.2 47.4% 11.2%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 0.000 0.000% 14.902%;
+    --secondary-foreground: 0.000 0.000% 98.039%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0.000 93.548% 81.765%;
+    --destructive-foreground: 0.000 74.684% 15.490%;
 
-    --ring: 216 34% 17%;
+    --ring: 0.000 0.000% 63.922%;
 
     --radius: 0.5rem;
 
-    --background-inverse-standard: rgba(230, 227, 246, 0.15);
-    --background-inverse-standard-foreground: rgba(255, 255, 255, 1);
+    --background-inverse-standard: #171717;
+    --background-inverse-standard-foreground: #fafafa;
 
-    --background-inverse-strong: rgba(255, 255, 255, 0.15);
-    --background-inverse-strong-foreground: rgba(255, 255, 255, 1);
+    --background-inverse-strong: #262626;
+    --background-inverse-strong-foreground: #fafafa;
 
     --background-core-weak: rgb(101, 75, 248);
 
-    --text-badge: rgba(151, 154, 171, 1);
+    --text-badge: #a3a3a3;
 
-    --colors-background-neutral-standard: rgba(11, 10, 18, 1);
+    --colors-background-neutral-standard: #0a0a0a;
 
-    --colors-outline-sentiment-primary: rgba(146, 118, 255, 1);
-    --colors-outline-neutral-strong: rgba(255, 255, 255, 0.15);
-    --colors-outline-neutral-standard: rgba(230, 227, 246, 0.1);
+    --colors-outline-sentiment-primary: #a3a3a3;
+    --colors-outline-neutral-strong: #737373;
+    --colors-outline-neutral-standard: #404040;
 
-    --colors-text-neutral-strong: rgba(255, 255, 255, 1);
-    --colors-text-neutral-standard: rgba(230, 227, 246, 1);
+    --colors-text-neutral-strong: #fafafa;
+    --colors-text-neutral-standard: #a3a3a3;
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0.000 0.000% 9.020%;
+    --sidebar-foreground: 0.000 0.000% 98.039%;
+    --sidebar-primary: 0.000 0.000% 98.039%;
+    --sidebar-primary-foreground: 0.000 0.000% 9.020%;
+    --sidebar-accent: 0.000 0.000% 14.902%;
+    --sidebar-accent-foreground: 0.000 0.000% 98.039%;
+    --sidebar-border: 0.000 0.000% 25.098%;
+    --sidebar-ring: 0.000 0.000% 63.922%;
 
-    --text-title: rgba(255, 255, 255, 1);
-    --text-sub-title: rgba(91, 93, 106, 1);
+    --text-title: #fafafa;
+    --text-sub-title: #a3a3a3;
     --text-sub-title-invert: rgba(151, 154, 171, 1);
-    --background-header-bar: rgba(11, 11, 12, 1);
+    --background-header-bar: #262626;
 
     --text-title-invert: rgba(22, 22, 24, 1);
 
-    --background-card: rgba(255, 255, 255, 0.05);
+    --background-card: #171717;
 
     --background-highlight: rgba(76, 164, 231, 0.1);
 
-    --input-border: rgba(255, 255, 255, 0.2);
+    --input-border: #737373;
 
     --metallic: #fafafa;
 
-    --bg-title: #38383a;
+    --bg-title: #262626;
     /* design colors */
 
-    --bg-base: #161618;
-    --bg-card: rgba(255, 255, 255, 0.05);
-    --bg-component: #202025;
-    --bg-input: rgba(255, 255, 255, 0.05);
+    --bg-base: #0a0a0a;
+    --bg-card: #171717;
+    --bg-component: #171717;
+    --bg-input: #0a0a0a;
     --bg-canvas: 0 0 0;
-    --bg-list: 56 56 58;
+    --bg-list: 38 38 38;
 
     /* #f6f6f7 */
-    --text-primary: 246 246 247;
-    --text-secondary: 178 181 183;
-    --text-disabled: #75787a;
-    --border-default: rgba(255, 255, 255, 0.2);
-    --border-accent: #ffffff;
-    --border-button: rgba(255, 255, 255, 0.1);
+    --text-primary: 250 250 250;
+    --text-secondary: 163 163 163;
+    --text-disabled: #a3a3a3;
+    --border-default: #404040;
+    --border-accent: #a3a3a3;
+    --border-button: #404040;
 
     /* *-inverse: colors in light mode */
     --text-primary-inverse: 22 22 24;
     --text-secondary-inverse: 117 120 122;
+    --accent-primary: 250 250 250;
+    --bg-accent: #262626;
+    --button-blue-text: #fafafa;
+    --state-success: 134 239 172;
+    --state-warning: 252 211 77;
+    --state-error: 252 165 165;
+    --ui-primary-hover: #e5e5e5;
+    --ui-primary-active: #d4d4d4;
+    --ui-subtle-hover: #303030;
+    --ui-subtle-active: #404040;
+    --ui-outline-hover: #262626;
+    --ui-outline-active: #303030;
+    --ui-destructive-hover: #fecaca;
+    --ui-destructive-active: #fee2e2;
+    --ui-control-hover-border: #a3a3a3;
+    --ui-selected-background: #262626;
+    --ui-selected-foreground: #fafafa;
+    --ui-overlay: rgb(0 0 0 / 0.6);
+    --ui-shadow-popover: 0 4px 12px rgb(0 0 0 / 0.28), 0 1px 3px rgb(0 0 0 / 0.20);
+    --ui-shadow-modal: 0 16px 48px rgb(0 0 0 / 0.40), 0 4px 12px rgb(0 0 0 / 0.24);
   }
 }
 
