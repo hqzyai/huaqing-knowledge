@@ -4161,7 +4161,7 @@ async def _wiki_mode_a_run(
                     tenant_id,
                     kb_id,
                     pid,
-                    entry.get("existing_page", {}).get("entity_names_kwd") or [entry.get("page_title", pid)],
+                    (entry.get("existing_page") or {}).get("entity_names_kwd") or [entry.get("page_title", pid)],
                     error=str(exc),
                 )
                 summary["errors"].append(f"REFINE_FAILED:{pid}")

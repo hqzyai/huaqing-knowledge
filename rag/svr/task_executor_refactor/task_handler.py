@@ -159,6 +159,7 @@ class TaskHandler:
             "graphrag",
             "mindmap",
             "artifact",
+            "wiki",
             "skill",
             "evaluation",
             "reembedding",
@@ -295,7 +296,8 @@ class TaskHandler:
                     run_structure_merge,
                 )
 
-                await run_structure_merge(self._task_context)
+                await self._compile_dataset_documents(embedding_model)
+                await run_structure_merge(self._task_context, progress_start=0.8 if task_type in {"structure_graph", "structure_mindmap"} else 0.0)
             elif task_type == "evaluation":
                 await self._run_evaluation()
             elif task_type == "reembedding":
@@ -304,6 +306,81 @@ class TaskHandler:
                 await self._run_clone()
             else:
                 await self._run_standard_chunking(embedding_model, vector_size)
+
+    async def _compile_dataset_documents(self, embedding_model: LLMBundle) -> None:
+        """Extract requested structures from existing chunks before dataset merge."""
+        from api.db.services.compilation_template_service import CompilationTemplateService
+        from rag.advanced_rag.knowlege_compile.runner import DOC_STRUCTURE_LLM_POOL_SIZE, run_structure_compile_over_batches
+        from rag.advanced_rag.knowlege_compile.structure import LLMCallPool
+        from rag.svr.task_executor_refactor.dataset_wiki_generator import _parser_config_compilation_template_ids
+
+        ctx = self._task_context
+        kind = {"structure_graph": "knowledge_graph", "structure_mindmap": "mind_map"}.get(ctx.task_type)
+        if not kind:
+            return
+        chat_id = ctx.kb_parser_config.get("llm_id") or ctx.llm_id
+        chat_model = LLMBundle(ctx.tenant_id, resolve_model_config(ctx.tenant_id, LLMType.CHAT, chat_id), lang=ctx.language)
+
+        documents = []
+        for doc_id in ctx.doc_ids:
+            ok, doc = await thread_pool_exec(DocumentService.get_by_id, doc_id)
+            if ok and str(doc.status) == "1" and not doc.pipeline_id:
+                documents.append(doc)
+        pool = LLMCallPool(DOC_STRUCTURE_LLM_POOL_SIZE)
+        completed_chunks = {doc.id: 0 for doc in documents}
+        completed_documents = set()
+        total_chunks = sum(max(1, doc.chunk_num or 0) for doc in documents)
+
+        async def compile_document(doc):
+            doc_id = doc.id
+
+            def compilation_progress(prog=None, msg=""):
+                if ctx.has_canceled_func(ctx.id):
+                    raise TaskCanceledException("Knowledge compilation cancelled")
+                if prog is not None and prog < 0:
+                    raise RuntimeError(msg)
+                ctx.progress_cb(msg=f"{doc.name}: {msg}")
+
+            def record_progress(event, payload):
+                if event != "structure_batch_completed":
+                    return
+                completed_chunks[doc_id] = min(max(1, doc.chunk_num or 0), completed_chunks[doc_id] + payload["chunk_count"])
+                fraction = sum(completed_chunks.values()) / max(1, total_chunks)
+                ctx.progress_cb(0.05 + 0.65 * fraction, msg=f"{doc.name}: batch {payload['batch_no']} complete; extracted {sum(completed_chunks.values())}/{total_chunks} chunks")
+
+            templates = []
+            for template_id in _parser_config_compilation_template_ids(doc.parser_config, ctx.tenant_id):
+                template = CompilationTemplateService.get_saved(template_id, ctx.tenant_id)
+                if template and template["kind"] == kind:
+                    templates.append((template_id, template["config"]))
+            if not templates:
+                raise ValueError(f"No {kind} template configured for {doc.name}")
+            compilation_progress(msg=f"Extracting {kind} from parsed chunks")
+            await run_structure_compile_over_batches(
+                active_templates=templates,
+                chat_mdl_by_tid={tid: chat_model for tid, _ in templates},
+                embedding_model=embedding_model,
+                tenant_id=ctx.tenant_id, kb_id=ctx.kb_id,
+                doc_id=doc_id, doc_name=doc.name, language=ctx.language,
+                chunk_batches=self._load_chunks_for_doc(ctx.tenant_id, ctx.kb_id, doc_id, batch_size=4),
+                progress_cb=compilation_progress,
+                record=record_progress,
+                llm_pool=pool,
+                cancel_check=lambda: ctx.has_canceled_func(ctx.id),
+            )
+            completed_documents.add(doc_id)
+            ctx.progress_cb(msg=f"Compiled {len(completed_documents)}/{len(documents)} documents")
+
+        ctx.progress_cb(0.05, msg=f"Compiling {len(documents)} documents with shared model pool")
+        tasks = [asyncio.create_task(compile_document(doc)) for doc in documents]
+        try:
+            await asyncio.gather(*tasks)
+        except BaseException:
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            raise
+        ctx.progress_cb(0.8, msg="Document compilation complete; merging dataset structures")
 
     def _init_kb(self, vector_size: int) -> None:
         """Initialize knowledge base index."""

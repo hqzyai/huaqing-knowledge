@@ -156,16 +156,14 @@ WIKI_DERIVED_COMPILE_KWDS = (
 def _parser_config_compilation_template_ids(parser_config, tenant_id: str) -> list[str]:
     """Resolve a doc's ``parser_config`` to compile-template ids by
     looking up configured groups. Returns ``[]`` if no group resolves."""
-    from rag.svr.task_executor_refactor.chunk_post_processor import (
-        _parser_config_compilation_template_group_ids,
-    )
+    from api.db.services.dataset_compilation_service import _group_ids
     from api.db.services.compilation_template_group_service import (
         CompilationTemplateGroupService,
     )
 
     template_ids: list[str] = []
     seen: set[str] = set()
-    for group_id in _parser_config_compilation_template_group_ids(parser_config):
+    for group_id in _group_ids(parser_config):
         for template_id in CompilationTemplateGroupService.resolve_template_ids(group_id, tenant_id):
             if template_id in seen:
                 continue
@@ -289,8 +287,8 @@ def _pipeline_compiler_llm_id(pipeline_id: str) -> str | None:
     return None
 
 
-def _validate_wiki_eligible_docs(eligible: list[tuple[dict, str]]) -> dict[str, str]:
-    """Validate one Wiki template and return each doc's pipeline chat model."""
+def _validate_wiki_eligible_docs(eligible: list[tuple[dict, str]], default_chat_llm_id: str | None = None) -> dict[str, str]:
+    """Resolve the pipeline model or the built-in parser's knowledge-base model."""
     template_ids = {template_id for _, template_id in eligible}
     if len(template_ids) > 1:
         raise ValueError("Eligible Wiki documents must use the same template")
@@ -298,11 +296,9 @@ def _validate_wiki_eligible_docs(eligible: list[tuple[dict, str]]) -> dict[str, 
     for doc, _ in eligible:
         doc_id = str(doc.get("id") or "")
         pipeline_id = (doc.get("pipeline_id") or "").strip()
-        if not pipeline_id:
-            raise ValueError(f"Wiki document {doc_id} must use a pipeline")
-        llm_id = _pipeline_compiler_llm_id(pipeline_id)
+        llm_id = _pipeline_compiler_llm_id(pipeline_id) if pipeline_id else (doc.get("parser_config") or {}).get("llm_id") or default_chat_llm_id
         if not llm_id:
-            raise ValueError(f"Wiki document {doc_id} pipeline Compiler must configure an LLM")
+            raise ValueError(f"Wiki document {doc_id} must configure a chat model on its knowledge base or pipeline Compiler")
         pipeline_chat_llm_ids[doc_id] = llm_id
     return pipeline_chat_llm_ids
 
@@ -1365,12 +1361,12 @@ async def run_wiki(
     if not eligible:
         progress(1.0, _wiki_empty_eligible_message(all_docs))
         return
-    pipeline_chat_llm_ids = _validate_wiki_eligible_docs(eligible)
+    pipeline_chat_llm_ids = _validate_wiki_eligible_docs(eligible, ctx.kb_parser_config.get("llm_id") or ctx.llm_id)
 
     # 3. Resolve chat models. MAP is per document, so each document uses
-    # its pipeline Compiler's ``llm_id``. REDUCE / PLAN / REFINE are
+    # its resolved chat model. REDUCE / PLAN / REFINE are
     # KB-wide and need exactly one model — we pick the first eligible
-    # pipeline Compiler's ``llm_id`` as the canonical KB chat model.
+    # resolved chat model as the canonical KB chat model.
     llm_bundle_cache: dict[str, LLMBundle] = {}
 
     def _bundle_for(llm_id: str) -> LLMBundle:
@@ -1659,6 +1655,11 @@ async def run_wiki_incremental(
     map_llm_pool = _create_wiki_llm_pool(progress)
     progress(0.0, "Loading documents for wiki compilation...")
 
+    def stage_progress(prog=None, msg=""):
+        if prog is not None and prog < 0:
+            raise RuntimeError(msg)
+        progress(msg=msg)
+
     # 1. Check if this is incremental (existing MAP rows present)
     existing_map_doc_ids = await _wiki_existing_map_doc_ids(ctx.tenant_id, ctx.kb_id)
     is_incremental = bool(existing_map_doc_ids)
@@ -1700,9 +1701,8 @@ async def run_wiki_incremental(
     eligible = _wiki_eligible_docs(all_docs, ctx.tenant_id, skip_doc_ids=deleted_doc_ids)
 
     if not eligible and not is_incremental:
-        progress(1.0, _wiki_empty_eligible_message(all_docs))
-        return
-    pipeline_chat_llm_ids = _validate_wiki_eligible_docs(eligible) if eligible else {}
+        raise ValueError(_wiki_empty_eligible_message(all_docs))
+    pipeline_chat_llm_ids = _validate_wiki_eligible_docs(eligible, ctx.kb_parser_config.get("llm_id") or ctx.llm_id) if eligible else {}
 
     eligible_doc_ids = {str(doc.get("id")) for doc, _ in eligible if doc.get("id")}
     previous_chunk_state = await _wiki_load_active_map_state(ctx.tenant_id, ctx.kb_id)
@@ -1844,7 +1844,7 @@ async def run_wiki_incremental(
                     tenant_id=ctx.tenant_id,
                     kb_id=ctx.kb_id,
                     language=ctx.language,
-                    callback=lambda p, msg: progress(p, msg),
+                    callback=stage_progress,
                     parser_config=parser_cfg,
                     batch_size_cap=8,
                     window_fraction=0.5,
@@ -1939,7 +1939,7 @@ async def run_wiki_incremental(
 
     # 5. Run incremental wiki compilation (Mode A or Mode B)
     if not kb_chat_llm_id:
-        raise ValueError("Wiki compilation requires an ingestion pipeline Compiler with an LLM configured")
+        raise ValueError("Wiki compilation requires a chat model on the knowledge base or pipeline Compiler")
     kb_chat_mdl = _bundle_for(kb_chat_llm_id)
 
     progress(0.65, f"Wiki {mode} incremental compilation ...")
@@ -1959,7 +1959,7 @@ async def run_wiki_incremental(
         chunk_delta=chunk_delta,
         previous_chunk_state=previous_chunk_state,
         current_chunk_state=current_chunk_state,
-        callback=lambda p, msg: progress(p, msg),
+        callback=stage_progress,
     )
 
     # 6. Materialize the canvas graph from the compiled pages. The incremental

@@ -633,6 +633,14 @@ def run_index(dataset_id: str, tenant_id: str, index_type: str):
     if not documents:
         return False, f"No documents in Dataset {dataset_id}"
 
+    compilation_kind = {"wiki": "wiki", "graph": "knowledge_graph", "mindmap": "mind_map",
+                        "structure_graph": "knowledge_graph", "structure_mindmap": "mind_map"}.get(index_type)
+    if compilation_kind:
+        from api.db.services.dataset_compilation_service import prepare_dataset_compilation
+
+        resolve_model_config(tenant_id, LLMType.CHAT.value, (kb.parser_config or {}).get("llm_id"))
+        documents = prepare_dataset_compilation(kb, tenant_id, documents, compilation_kind)
+
     sample_document = documents[0]
     document_ids = [document["id"] for document in documents]
 
@@ -1762,7 +1770,7 @@ def _group_has_template_of_kind(group_id: str, tenant_id: str, accepted: set[str
 
 def _parser_config_has_template_of_kind(parser_config, tenant_id: str, accepted: set[str], template_cache: dict[str, bool]) -> bool:
     from api.db.services.compilation_template_service import CompilationTemplateService
-    from rag.svr.task_executor_refactor.chunk_post_processor import _parser_config_compilation_template_ids
+    from rag.svr.task_executor_refactor.dataset_wiki_generator import _parser_config_compilation_template_ids
 
     for template_id in _parser_config_compilation_template_ids(parser_config, tenant_id):
         if template_id not in template_cache:

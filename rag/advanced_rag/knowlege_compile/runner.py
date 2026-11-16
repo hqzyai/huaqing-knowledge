@@ -490,6 +490,8 @@ async def run_structure_compile_over_batches(
                 await _cancel_pending()
                 raise
             completed[sequence] = (batch_no, batch_len, template_id, docs)
+            if record:
+                record("structure_batch_completed", {"batch_no": batch_no, "chunk_count": batch_len})
         await _commit_ready()
 
     async def _submit_batches() -> None:

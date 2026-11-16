@@ -861,11 +861,14 @@ async def _do_build(
     return cleanup_ok
 
 
-async def run_structure_merge(ctx: TaskContext) -> None:
+async def run_structure_merge(ctx: TaskContext, *, progress_start: float = 0.0) -> None:
     """Entry point — called from task_handler.py when ``is_structure_merge_task`` matches."""
     from api.db.services.compilation_template_service import CompilationTemplateService
 
-    progress = ctx.progress_cb
+    def progress(prog=None, msg=""):
+        mapped = progress_start + (1 - progress_start) * prog if prog is not None and prog >= 0 else prog
+        ctx.progress_cb(mapped, msg=msg)
+
     task_type = (ctx.task_type or "").lower()
     target_kind = {
         "structure_graph": "knowledge_graph",
@@ -892,14 +895,12 @@ async def run_structure_merge(ctx: TaskContext) -> None:
             raise RuntimeError(f"Knowledge base {ctx.kb_id} not found")
     except Exception:
         logging.exception("structure_merge: failed to bind embedding model for kb=%s", ctx.kb_id)
-        progress(1.0, "Failed to bind embedding model — aborting.")
-        return
+        raise
 
     progress(0.0, "Scanning doc_graph rows...")
     pairs = await _collect_structure_pairs(ctx.tenant_id, ctx.kb_id)
     if not pairs:
-        progress(1.0, "No doc_graph rows found.")
-        return
+        raise ValueError("No document structures were generated. Check the chat model and compilation template.")
 
     template_meta: dict[str, tuple[bool, Optional[str]]] = {}
 
@@ -929,8 +930,7 @@ async def run_structure_merge(ctx: TaskContext) -> None:
 
     if not eligible:
         kind_label = "any kind" if merge_all else (target_kind or task_type)
-        progress(1.0, f"No eligible templates for {kind_label}.")
-        return
+        raise ValueError(f"No eligible templates for {kind_label}.")
 
     disabled_doc_ids = await _disabled_doc_ids(ctx.kb_id)
     # A disabled document does not trigger an immediate rebuild. On the next
@@ -973,6 +973,8 @@ async def run_structure_merge(ctx: TaskContext) -> None:
     if all_cleanup_ok:
         await _consume_deletion_markers(ctx.tenant_id, ctx.kb_id)
 
+    if not all_cleanup_ok:
+        raise RuntimeError(f"Dataset graph build failed or incomplete: {rebuilt}/{total} processed. See worker logs.")
     progress(1.0, f"Built {rebuilt}/{total} dataset graph(s).")
 
 
