@@ -1,0 +1,86 @@
+# Isolated local development only. Credentials below are not production secrets.
+name: ragflow-mac-dev
+services:
+  mysql:
+    image: mysql:8.0.40
+    mem_limit: 512m
+    environment:
+      MYSQL_ROOT_PASSWORD: ragflow-local-dev
+      MYSQL_DATABASE: rag_flow
+    command: ["--max-connections=100", "--innodb-buffer-pool-size=128M"]
+    volumes:
+      - mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-pragflow-local-dev"]
+      interval: 10s
+      retries: 30
+  es01:
+    image: elasticsearch:8.11.3
+    mem_limit: 1g
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9200/_cluster/health"]
+      interval: 10s
+      retries: 30
+  redis:
+    image: redis:7-alpine
+    mem_limit: 192m
+    command: ["redis-server", "--requirepass", "ragflow-local-dev", "--maxmemory", "128mb", "--maxmemory-policy", "volatile-lru"]
+    volumes:
+      - redis:/data
+  minio:
+    image: quay.io/minio/minio:latest
+    mem_limit: 384m
+    command: ["server", "/data"]
+    environment:
+      MINIO_ROOT_USER: rag_flow
+      MINIO_ROOT_PASSWORD: ragflow-local-dev
+    volumes:
+      - minio:/data
+  app:
+    image: local/huaqing-knowledge:server-baseline-20261113
+    pull_policy: never
+    platform: linux/amd64
+    mem_limit: 6g
+    # Match the 10 logical CPUs currently available to Docker Desktop.
+    cpus: 10
+    command: ["--disable-datasync", "--workers=1"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+      es01:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+    ports:
+      - "127.0.0.1:28000:28002"
+      - "127.0.0.1:9380:9380"
+    environment:
+      API_PROXY_SCHEME: python
+      CADDY_HTTP_PORT: 28002
+      DOC_ENGINE: elasticsearch
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_PASSWORD: ragflow-local-dev
+      MYSQL_DBNAME: rag_flow
+      MINIO_HOST: minio
+      MINIO_USER: rag_flow
+      MINIO_PASSWORD: ragflow-local-dev
+      ES_HOST: es01
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ragflow-local-dev
+    volumes:
+      - logs:/ragflow/logs
+volumes:
+  mysql:
+  elasticsearch:
+  redis:
+  minio:
+  logs:

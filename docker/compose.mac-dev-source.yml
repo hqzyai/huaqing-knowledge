@@ -1,0 +1,19 @@
+# Apply after compose.mac-dev.yml for source-based local development.
+# Frontend: Vite on 5173 hot-reloads; 28000 serves the latest npm run build.
+# Backend: restart app after editing these mounted Python packages.
+services:
+  app:
+    environment:
+      TABLE_RECOGNITION_BATCH_SIZE: "1"
+    volumes:
+      - ../api:/ragflow/api
+      - ../rag:/ragflow/rag
+      # Preserve image-bundled OCR/layout resources beneath the source bind.
+      - model-resources:/ragflow/rag/res
+      - ../common:/ragflow/common
+      - ../deepdoc:/ragflow/deepdoc
+      - ../web/dist:/ragflow/web/dist:ro
+volumes:
+  model-resources:
+    external: true
+    name: ragflow-mac-dev-model-resources-v011
