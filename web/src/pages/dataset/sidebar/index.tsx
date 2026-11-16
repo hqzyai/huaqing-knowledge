@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import {
   LucideBookText,
+  LucideNetwork,
+  LucideGitBranch,
   LucideFolderOpen,
   LucideLogs,
   LucideSettings,
@@ -17,7 +19,8 @@ import { Routes } from '@/routes';
 import { formatPureDate } from '@/utils/date';
 
 import { IDataset } from '@/interfaces/database/dataset';
-import { useParams } from 'react-router';
+import { ViewMode, VisibleViewModes } from '../compilation/constants';
+import { useParams, useSearchParams } from 'react-router';
 
 type PropType = {
   refreshCount?: number;
@@ -27,6 +30,8 @@ type PropType = {
 export function SideBar({ dataset: data }: PropType) {
   const pathName = useSecondPathName();
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const activeView = VisibleViewModes.find((mode) => mode === searchParams.get('view')) ?? ViewMode.LlmWiki;
   const { t } = useTranslation();
 
   const items = useMemo(() => {
@@ -53,8 +58,21 @@ export function SideBar({ dataset: data }: PropType) {
       },
       {
         icon: <LucideBookText className="size-[1em]" />,
-        label: 'Artifacts',
+        label: t('knowledgeCompilation.llmWiki'),
         key: Routes.Compilation,
+        view: ViewMode.LlmWiki,
+      },
+      {
+        icon: <LucideNetwork className="size-[1em]" />,
+        label: t('knowledgeCompilation.graph'),
+        key: Routes.Compilation,
+        view: ViewMode.Graph,
+      },
+      {
+        icon: <LucideGitBranch className="size-[1em]" />,
+        label: t('knowledgeCompilation.structureMindmap'),
+        key: Routes.Compilation,
+        view: ViewMode.MindMap,
       },
     ];
 
@@ -103,10 +121,10 @@ export function SideBar({ dataset: data }: PropType) {
       <nav className="px-5 pt-1 pb-5 overflow-y-auto">
         <ul className="space-y-5">
           {items.map((item) => {
-            const active = '/' + pathName === item.key;
+            const active = '/' + pathName === item.key && (!item.view || item.view === activeView);
 
             return (
-              <li key={item.key}>
+              <li key={item.view ?? item.key}>
                 <Button
                   asLink
                   block
@@ -115,7 +133,7 @@ export function SideBar({ dataset: data }: PropType) {
                     'justify-start gap-2.5 px-3 relative h-10 text-base',
                     active && 'bg-bg-card text-text-primary',
                   )}
-                  to={`${Routes.DatasetBase}${item.key}/${id}`}
+                  to={`${Routes.DatasetBase}${item.key}/${id}${item.view ? `?view=${item.view}` : ''}`}
                 >
                   {item.icon}
                   <span>{item.label}</span>

@@ -110,7 +110,7 @@ export function WikiLeftPanel({
             {t('knowledgeCompilation.contents')}
           </TabsTrigger>
           <TabsTrigger value={LeftPanelTab.Graph}>
-            {t('knowledgeCompilation.graph')}
+            {t('knowledgeCompilation.wikiLinks')}
           </TabsTrigger>
         </TabsList>
       </Tabs>

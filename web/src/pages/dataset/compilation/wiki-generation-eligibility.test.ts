@@ -18,8 +18,8 @@ describe('canGenerateWiki', () => {
     ).toBe(false);
   });
 
-  it('requires an ingestion pipeline', () => {
-    expect(canGenerateWiki(dataset())).toBe(false);
+  it('allows built-in parsing with parsed chunks', () => {
+    expect(canGenerateWiki(dataset())).toBe(true);
   });
 
   it('allows pipeline-backed datasets', () => {
@@ -27,6 +27,6 @@ describe('canGenerateWiki', () => {
   });
 
   it('ignores a blank pipeline id', () => {
-    expect(canGenerateWiki(dataset({ pipeline_id: '   ' }))).toBe(false);
+    expect(canGenerateWiki(dataset({ pipeline_id: '   ' }))).toBe(true);
   });
 });
