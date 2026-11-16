@@ -1,34 +1,17 @@
 import { RAGFlowAvatar } from '@/components/ragflow-avatar';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useChangeLanguage } from '@/hooks/logic-hooks';
 import {
   useFetchUserInfo,
   useListTenant,
 } from '@/hooks/use-user-setting-request';
 import { cn } from '@/lib/utils';
-import { supportedLanguages } from '@/locales/config';
 import { TenantRole } from '@/pages/user-setting/constants';
 import { Routes } from '@/routes';
-import { Languages } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { BellButton } from './bell-button';
 import { MobileNavbar } from './global-navbar';
 import { MobileMenuFooter } from './mobile-menu-footer';
-import ThemeButton from './theme-button';
-
-function LanguageOption({ code, label }: { code: string; label: string }) {
-  const changeLanguage = useChangeLanguage();
-  const handleSelect = () => changeLanguage(code);
-  return <DropdownMenuItem onSelect={handleSelect}>{label}</DropdownMenuItem>;
-}
 
 const renderMobileFooter = (close: () => void) => (
   <MobileMenuFooter onClose={close} />
@@ -40,10 +23,9 @@ export function Header({
 }: React.HTMLAttributes<HTMLElement>) {
   const { t } = useTranslation();
   const {
-    data: { language = 'en', avatar, nickname },
+    data: { avatar, nickname },
   } = useFetchUserInfo();
   const { data: tenantData } = useListTenant();
-  const currentLanguage = supportedLanguages.find((x) => x.code === language);
   return (
     <header
       className={cn(
@@ -64,30 +46,9 @@ export function Header({
         className="flex shrink-0 items-center gap-2"
         data-testid="auth-status"
       >
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={currentLanguage?.displayName}
-            >
-              <Languages className="size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {supportedLanguages.map((x) => (
-              <LanguageOption
-                key={x.code}
-                code={x.code}
-                label={x.displayName}
-              />
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
         {tenantData?.some((x) => x.role === TenantRole.Invite) && (
           <BellButton />
         )}
-        <ThemeButton />
         <Link
           to={Routes.UserSetting}
           aria-label={t('workspace.settings')}

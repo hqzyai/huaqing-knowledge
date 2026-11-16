@@ -16,7 +16,6 @@
 
 import { IconFontFill } from '@/components/icon-font';
 import { RAGFlowAvatar } from '@/components/ragflow-avatar';
-import ThemeSwitch from '@/components/theme-switch';
 import { Button } from '@/components/ui/button';
 import { Domain } from '@/constants/common';
 import { useLogout } from '@/hooks/use-login-request';
@@ -139,8 +138,6 @@ export function SideBar() {
       <footer className="p-2 md:p-6 mt-auto">
         <div className="hidden md:flex items-center gap-2 mb-6 justify-between">
           <span className="text-xs text-accent-primary">{version}</span>
-
-          <ThemeSwitch />
         </div>
 
         <Button

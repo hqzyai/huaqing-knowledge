@@ -29,7 +29,6 @@ import {
   Message,
 } from '@/interfaces/database/chat';
 import { IKnowledgeFile } from '@/interfaces/database/dataset';
-import { changeLanguageAsync } from '@/locales/config';
 import api from '@/utils/api';
 import { getAuthorization } from '@/utils/authorization-util';
 import { buildMessageUuid } from '@/utils/chat';
@@ -50,7 +49,6 @@ import {
 } from 'react';
 import { useTranslate } from './common-hooks';
 import { useSetPaginationParams } from './route-hook';
-import { useSaveSetting } from './use-user-setting-request';
 
 export function usePrevious<T>(value: T) {
   const ref = useRef<T>();
@@ -68,20 +66,6 @@ export const useSetSelectedRecord = <T = IKnowledgeFile>() => {
   };
 
   return { currentRecord, setRecord };
-};
-
-export const useChangeLanguage = () => {
-  const { saveSetting } = useSaveSetting();
-
-  const changeLanguage = useCallback(
-    (lng: string) => {
-      changeLanguageAsync(lng);
-      saveSetting({ language: lng });
-    },
-    [saveSetting],
-  );
-
-  return changeLanguage;
 };
 
 export const useGetPaginationWithRouter = () => {

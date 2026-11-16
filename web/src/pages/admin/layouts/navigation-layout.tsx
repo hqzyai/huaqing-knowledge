@@ -20,7 +20,6 @@ import { getSystemVersion, logout } from '@/services/admin-service';
 
 import authorizationUtil from '@/utils/authorization-util';
 
-import ThemeSwitch from '../../../components/theme-switch';
 import { IS_ENTERPRISE } from '../utils';
 import { CurrentUserInfoContext } from './root-layout';
 
@@ -129,8 +128,6 @@ const AdminNavigationLayout = () => {
             <span className="leading-none text-xs text-accent-primary">
               {version}
             </span>
-
-            <ThemeSwitch />
           </div>
 
           <Button
