@@ -47,7 +47,7 @@ class Pdf(PdfParser):
         logging.debug("layouts cost: {}s".format(timer() - start))
 
         start = timer()
-        self._table_transformer_job(zoomin)
+        self._table_transformer_job(zoomin, callback=callback)
         callback(0.65, "Table analysis ({:.2f}s)".format(timer() - start))
 
         start = timer()

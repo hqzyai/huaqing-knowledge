@@ -111,15 +111,14 @@ def load_model(model_dir, nm, device_id: int | None = None):
             "gpu_mem_limit": max(gpu_mem_limit_mb, 0) * 1024 * 1024,
             "arena_extend_strategy": arena_strategy,  # gpu memory allocation strategy
         }
-        sess = ort.InferenceSession(model_file_path, options=options, providers=["CUDAExecutionProvider"], provider_options=[cuda_provider_options])
+        sess = ort.InferenceSession(model_file_path, sess_options=options, providers=["CUDAExecutionProvider"], provider_options=[cuda_provider_options])
         # Explicit arena shrinkage for GPU to release VRAM back to the system after each run
         if os.environ.get("OCR_GPUMEM_ARENA_SHRINKAGE") == "1":
             run_options.add_run_config_entry("memory.enable_memory_arena_shrinkage", f"gpu:{provider_device_id}")
             logging.info(f"load_model {model_file_path} enabled GPU memory arena shrinkage on device {provider_device_id}")
         logging.info(f"load_model {model_file_path} uses GPU (device {provider_device_id}, gpu_mem_limit={cuda_provider_options['gpu_mem_limit']}, arena_strategy={arena_strategy})")
     else:
-        sess = ort.InferenceSession(model_file_path, options=options, providers=["CPUExecutionProvider"])
-        run_options.add_run_config_entry("memory.enable_memory_arena_shrinkage", "cpu")
+        sess = ort.InferenceSession(model_file_path, sess_options=options, providers=["CPUExecutionProvider"])
         logging.info(f"load_model {model_file_path} uses CPU")
     loaded_model = (sess, run_options)
     loaded_models[model_cached_tag] = loaded_model

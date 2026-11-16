@@ -48,7 +48,7 @@ class Pdf(PdfParser):
 
         # 3. Table Analysis
         callback(msg="Table Analysis")
-        self._table_transformer_job(zoomin)
+        self._table_transformer_job(zoomin, callback=callback)
 
         # 4. Text Merge
         self._text_merge()

@@ -186,6 +186,86 @@ def _component(label, bbox):
     return {"label": label, "x0": x0, "x1": x1, "top": top, "bottom": bottom}
 
 
+@pytest.mark.parametrize("cancel_after_first_batch", [False, True])
+def test_table_batches_preserve_order_and_stop_after_cancellation(monkeypatch, cancel_after_first_batch):
+    module = _load_pdf_parser(monkeypatch)
+    parser = module.RAGFlowPdfParser.__new__(module.RAGFlowPdfParser)
+    parser.page_images = [_FakeImage()]
+    parser.page_layout = [[{"type": "table", "x0": 0, "top": 0, "x1": width, "bottom": 10} for width in (10, 20, 30)]]
+    parser.page_cum_height = [0]
+    parser.boxes = []
+    batches = []
+
+    def detect(images):
+        batches.append([image.size[0] for image in images])
+        return [[_component("table row", (0, 0, image.size[0], 10))] for image in images]
+
+    class Canceled(Exception):
+        pass
+
+    def progress(*, msg):
+        if cancel_after_first_batch and msg == "Table structure recognition: 2/3":
+            raise Canceled()
+
+    parser.tbl_det = detect
+    monkeypatch.setenv("TABLE_RECOGNITION_BATCH_SIZE", "2")
+    if cancel_after_first_batch:
+        with pytest.raises(Canceled):
+            parser._table_transformer_job(1, auto_rotate=False, callback=progress)
+        assert batches == [[30, 40]]
+    else:
+        parser._table_transformer_job(1, auto_rotate=False, callback=progress)
+        assert batches == [[30, 40], [50]]
+        assert [item["table_index"] for item in parser.tb_cpns] == [0, 1, 2]
+        assert [item["x1"] for item in parser.tb_cpns] == [20, 30, 40]
+
+
+def test_orientation_cancellation_is_not_swallowed_as_ocr_failure(monkeypatch):
+    module = _load_pdf_parser(monkeypatch)
+    parser = module.RAGFlowPdfParser.__new__(module.RAGFlowPdfParser)
+    calls = []
+    parser.ocr = lambda image: calls.append(image) or []
+
+    class Canceled(Exception):
+        pass
+
+    def progress(*, msg):
+        if msg.endswith("finished"):
+            raise Canceled()
+
+    with pytest.raises(Canceled):
+        parser._evaluate_table_orientation(_FakeImage(), callback=progress)
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize(
+    ("confidences", "expected_angle", "expected_calls"),
+    [
+        ([0.95, 0.99, 0.99, 0.99], 0, 1),
+        ([0.8 / 1.002, 0.99, 0.99, 0.99], 0, 1),
+        ([0.3, 0.95, 0.2, 0.4], 90, 4),
+        ([0.7, 0.75, 0.6, 0.5], 0, 4),
+    ],
+)
+def test_orientation_skips_only_candidates_that_cannot_win(monkeypatch, confidences, expected_angle, expected_calls):
+    from PIL import Image
+
+    module = _load_pdf_parser(monkeypatch)
+    parser = module.RAGFlowPdfParser.__new__(module.RAGFlowPdfParser)
+    calls = []
+
+    def ocr(image):
+        confidence = confidences[len(calls)]
+        calls.append(image)
+        return [(None, ("table", confidence))]
+
+    parser.ocr = ocr
+    angle, _, scores = parser._evaluate_table_orientation(Image.new("RGB", (30, 20)))
+    assert angle == expected_angle
+    assert len(calls) == expected_calls
+    assert len(scores) == expected_calls
+
+
 def _scale_bbox(bbox, zoom):
     x0, top, x1, bottom = bbox
     return x0 * zoom, top * zoom, x1 * zoom, bottom * zoom
@@ -239,7 +319,7 @@ def test_table_transformer_resolves_auto_rotate_from_argument_or_environment(mon
 
     orientation_calls = []
 
-    def evaluate_orientation(table_img):
+    def evaluate_orientation(table_img, callback=None):
         orientation_calls.append(table_img)
         return 0, table_img, {}
 
@@ -309,7 +389,7 @@ def test_table_transformer_keeps_rotated_ocr_and_tsr_coordinates_aligned(monkeyp
     parser.page_layout = [[{"type": "table", "x0": 100, "top": 200, "x1": 220, "bottom": 270}]]
     parser.tbl_det = _FakeTableDetector(zoom=1, angle=angle)
     parser.ocr = _FakeOcr(angle)
-    parser._evaluate_table_orientation = lambda table_img: (
+    parser._evaluate_table_orientation = lambda table_img, callback=None: (
         angle,
         _FakeImage(table_img.size[1], table_img.size[0]) if angle in (90, 270) else _FakeImage(*table_img.size),
         {},

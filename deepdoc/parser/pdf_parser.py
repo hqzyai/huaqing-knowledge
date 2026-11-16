@@ -364,12 +364,12 @@ class RAGFlowPdfParser:
 
         return False
 
-    def _evaluate_table_orientation(self, table_img, sample_ratio=0.3):
+    def _evaluate_table_orientation(self, table_img, sample_ratio=0.3, callback=None):
         """
         Evaluate the best rotation orientation for a table image.
 
-        Tests 4 rotation angles (0°, 90°, 180°, 270°) and uses OCR
-        confidence scores to determine the best orientation.
+        Tests the original orientation first, then the other three angles
+        only when the original score allows rotation under the selection rule.
 
         Args:
             table_img: PIL Image object of the table region
@@ -396,6 +396,8 @@ class RAGFlowPdfParser:
         score_0 = None
 
         for angle, name in rotations:
+            if callback:
+                callback(msg=f"Table orientation: {angle}°")
             # Rotate image
             if angle == 0:
                 rotated_img = table_img
@@ -430,6 +432,8 @@ class RAGFlowPdfParser:
                 total_regions = 0
                 combined_score = 0
 
+            if callback:
+                callback(msg=f"Table orientation: {angle}° finished")
             results[angle] = {"avg_confidence": avg_score, "total_regions": total_regions, "combined_score": combined_score}
             if angle == 0:
                 score_0 = combined_score
@@ -440,6 +444,11 @@ class RAGFlowPdfParser:
                 best_score = combined_score
                 best_angle = angle
                 best_img = rotated_img
+
+            # The selection rule below never rotates a table with a 0° score
+            # >= 0.8. Avoid three full OCR passes whose results cannot win.
+            if angle == 0 and combined_score >= 0.8:
+                break
 
         # Absolute threshold rule:
         # Only choose non-0° if it exceeds 0° by more than 0.2 and 0° score is below 0.8.
@@ -467,7 +476,7 @@ class RAGFlowPdfParser:
             return width - y, x
         return x, y
 
-    def _table_transformer_job(self, ZM, auto_rotate=None):
+    def _table_transformer_job(self, ZM, auto_rotate=None, callback=None):
         """
         Process table structure recognition.
 
@@ -484,6 +493,9 @@ class RAGFlowPdfParser:
         """
         if auto_rotate is None:
             auto_rotate = os.getenv("TABLE_AUTO_ROTATE", "true").lower() in ("true", "1", "yes")
+        batch_size = int(os.getenv("TABLE_RECOGNITION_BATCH_SIZE", "16"))
+        if batch_size < 1:
+            raise ValueError("TABLE_RECOGNITION_BATCH_SIZE must be positive")
 
         logging.debug("Table processing...")
         imgs, pos = [], []
@@ -505,6 +517,8 @@ class RAGFlowPdfParser:
             if not tbls:
                 continue
             for page_table_index, tb in enumerate(tbls):  # for table
+                if callback:
+                    callback(msg=f"Table preparation: page {p + 1}, table {page_table_index + 1}/{len(tbls)}")
                 left, top, right, bott = tb["x0"] - MARGIN, tb["top"] - MARGIN, tb["x1"] + MARGIN, tb["bottom"] + MARGIN
                 left *= ZM
                 top *= ZM
@@ -522,7 +536,7 @@ class RAGFlowPdfParser:
                 if auto_rotate:
                     # Evaluate table orientation
                     logging.debug(f"Evaluating orientation for table {table_index} on page {p}")
-                    best_angle, rotated_img, rotation_scores = self._evaluate_table_orientation(table_img)
+                    best_angle, rotated_img, rotation_scores = self._evaluate_table_orientation(table_img, callback=callback)
 
                     # Store rotation info
                     self.table_rotations[table_index] = {
@@ -549,11 +563,18 @@ class RAGFlowPdfParser:
             return
 
         # Perform table structure recognition (TSR)
-        recos = self.tbl_det(imgs)
+        recos = []
+        for start in range(0, len(imgs), batch_size):
+            end = min(start + batch_size, len(imgs))
+            if callback:
+                callback(msg=f"Table structure recognition: {start}/{len(imgs)}")
+            recos.extend(self.tbl_det(imgs[start:end]))
+            if callback:
+                callback(msg=f"Table structure recognition: {end}/{len(imgs)}")
 
         # If tables were rotated, re-OCR the rotated images and replace table boxes
         if auto_rotate:
-            self._ocr_rotated_tables(ZM, table_layouts, recos, tbcnt)
+            self._ocr_rotated_tables(ZM, table_layouts, recos, tbcnt, callback=callback)
 
         def _map_tsr_component_to_page_space(component, table_pos):
             crop_left, crop_top, page, table_index, _ = table_pos
@@ -639,7 +660,7 @@ class RAGFlowPdfParser:
                 b["H_right"] = spans[ii]["x1"]
                 b["SP"] = ii
 
-    def _ocr_rotated_tables(self, ZM, table_layouts, tsr_results, tbcnt):
+    def _ocr_rotated_tables(self, ZM, table_layouts, tsr_results, tbcnt, callback=None):
         """
         Re-OCR rotated table images and update self.boxes.
 
@@ -720,6 +741,8 @@ class RAGFlowPdfParser:
             return added
 
         for tbl_info in table_layouts:
+            if callback:
+                callback(msg=f"Table OCR: {tbl_info['table_index'] + 1}/{len(table_layouts)}")
             table_index = tbl_info["table_index"]
             page = tbl_info["page"]
             layout = tbl_info["layout"]
@@ -747,6 +770,8 @@ class RAGFlowPdfParser:
             # Perform OCR on rotated image
             img_array = np.array(rotated_img)
             ocr_results = self.ocr(img_array)
+            if callback:
+                callback(msg=f"Table OCR: {table_index + 1}/{len(table_layouts)} finished")
 
             if not ocr_results:
                 logging.warning(f"No OCR results for rotated table {table_index}, restoring originals")
@@ -1816,7 +1841,7 @@ class RAGFlowPdfParser:
             callback(0.63, "Layout analysis ({:.2f}s)".format(timer() - start))
 
         start = timer()
-        self._table_transformer_job(zoomin)
+        self._table_transformer_job(zoomin, callback=callback)
         if callback:
             callback(0.83, "Table analysis ({:.2f}s)".format(timer() - start))
 
