@@ -1,3 +1,4 @@
+import { appName } from '@/conf.json';
 /*
  *  Copyright 2026 The InfiniFlow Authors. All Rights Reserved.
  *
@@ -27,7 +28,7 @@ const BackendServiceApi = ({ show }: { show(): void }) => {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-4">
-          <CardTitle>Agentos-RAG API</CardTitle>
+          <CardTitle>{appName} API</CardTitle>
           <Button onClick={show}>{t('apiKey')}</Button>
         </div>
       </CardHeader>

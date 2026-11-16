@@ -1,3 +1,4 @@
+import { appName } from '@/conf.json';
 import { type AxiosResponseHeaders } from 'axios';
 import { useContext, useEffect, useId } from 'react';
 import { useForm } from 'react-hook-form';
@@ -139,9 +140,9 @@ function AdminLogin() {
             <img
               className="size-8 mr-5 object-contain"
               src="/logo.svg"
-              alt="Agentos-RAG logo"
+              alt={`${appName} logo`}
             />
-            <span className="text-xl font-bold">Agentos-RAG</span>
+            <span className="text-xl font-bold">{appName}</span>
           </div>
 
           <h1 className="mt-[6.5rem] text-page-title text-center mb-12">

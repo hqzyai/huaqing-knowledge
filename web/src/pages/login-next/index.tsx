@@ -1,3 +1,4 @@
+import { appName } from '@/conf.json';
 import SvgIcon from '@/components/svg-icon';
 import { useAuth } from '@/hooks/auth-hooks';
 import {
@@ -385,11 +386,9 @@ const Login = () => {
                 className="size-8 mr-[12] cursor-pointer"
               />
             </div>
-            <div className="text-xl font-bold self-center">Agentos-RAG</div>
+            <div className="text-xl font-bold self-center">{appName}</div>
           </div>
-          <h1 className="text-page-title  text-center mb-2">
-            {t('title')}
-          </h1>
+          <h1 className="text-page-title  text-center mb-2">{t('title')}</h1>
         </div>
         <div className="relative z-10 flex flex-col items-center justify-center min-h-[1050px] px-4 sm:px-6 lg:px-8">
           {/* Login Form */}

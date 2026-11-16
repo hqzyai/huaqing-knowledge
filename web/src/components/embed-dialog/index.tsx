@@ -1,3 +1,4 @@
+import { appName } from '@/conf.json';
 /*
  *  Copyright 2026 The InfiniFlow Authors. All Rights Reserved.
  *
@@ -460,7 +461,7 @@ window.addEventListener('message',e=>{
                       name="widgetFooterText"
                       label="Footer text"
                     >
-                      <Input placeholder="Powered by Agentos-RAG"></Input>
+                      <Input placeholder={`Powered by ${appName}`}></Input>
                     </RAGFlowFormItem>
                     <RAGFlowFormItem
                       name="widgetFooterLink"

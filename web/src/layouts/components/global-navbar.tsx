@@ -1,3 +1,4 @@
+import { appName } from '@/conf.json';
 import { useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
@@ -255,11 +256,11 @@ export function MobileNavbar({ renderFooter }: MobileNavbarProps) {
           <div className="flex items-center gap-2">
             <img
               src="/logo.svg"
-              alt="Agentos-RAG logo"
+              alt={`${appName} logo`}
               className="size-9 object-contain"
             />
             <span className="text-base font-semibold text-text-primary">
-              Agentos-RAG
+              {appName}
             </span>
           </div>
         </div>

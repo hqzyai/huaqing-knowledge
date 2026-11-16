@@ -1,3 +1,4 @@
+import { appName } from '@/conf.json';
 /*
  *  Copyright 2026 The InfiniFlow Authors. All Rights Reserved.
  *
@@ -52,7 +53,7 @@ export function EmbedContainer({
           <div className="flex items-center gap-2 md:ml-auto md:mr-3">
             <img
               src="/logo.svg"
-              alt="Agentos-RAG logo"
+              alt={`${appName} logo`}
               className="size-6 object-contain md:size-8"
             />
             <span className="hidden md:inline-block text-lg font-bold text-foreground">

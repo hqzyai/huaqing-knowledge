@@ -1,3 +1,4 @@
+import { appName } from '@/conf.json';
 /*
  *  Copyright 2026 The InfiniFlow Authors. All Rights Reserved.
  *
@@ -661,8 +662,8 @@ const UploadModal: React.FC<UploadModalProps> = ({
         t('skills.validation.valid') || 'Valid skill format',
       );
 
-      // 4. Upload to the current Agentos-RAG workspace
-      setGitProgress('Uploading to Agentos-RAG...');
+      // 4. Upload to the current workspace
+      setGitProgress(`Uploading to ${appName}...`);
       const skillName =
         validation.name || repo.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
 

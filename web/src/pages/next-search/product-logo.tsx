@@ -14,10 +14,11 @@
  *  limitations under the License.
  */
 
+import { appName } from '@/conf.json';
+
 import { useFetchTokenListBeforeOtherStep } from '@/components/embed-dialog/use-show-embed-dialog';
 import { Button } from '@/components/ui/button';
 import { SharedFrom } from '@/constants/chat';
-import { cn } from '@/lib/utils';
 import { Routes } from '@/routes';
 import { Send } from 'lucide-react';
 import { useState } from 'react';
@@ -67,7 +68,7 @@ export function ProductLogo({
     <div className="flex gap-4 items-center">
       <h1
         onClick={onClick}
-        className={cn('flex cursor-pointer items-center gap-3 text-4xl font-bold')}
+        className="flex cursor-pointer items-center gap-3 text-4xl font-bold"
       >
         <img
           src="/logo.svg"
@@ -75,7 +76,7 @@ export function ProductLogo({
           aria-hidden="true"
           className="size-12 object-contain"
         />
-        <span className="text-text-primary">Agentos-RAG</span>
+        <span className="text-text-primary">{appName}</span>
       </h1>
       {showEmbedIcon && <EmbedIcon></EmbedIcon>}
     </div>

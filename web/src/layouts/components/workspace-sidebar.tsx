@@ -1,3 +1,4 @@
+import { appName } from '@/conf.json';
 import {
   Database,
   Folder,
@@ -51,10 +52,14 @@ export function WorkspaceSidebar() {
     <aside className="hidden min-h-0 flex-col border-r border-border-button bg-bg-card lg:flex">
       <Link
         to={Routes.Root}
-        className="flex h-20 items-center gap-3 px-5 text-lg font-semibold text-text-primary"
+        className="flex h-20 items-center gap-2 px-4 text-sm font-semibold text-text-primary"
       >
-        <img src="/logo.svg" alt="" className="size-9 object-contain" />
-        Agentos-RAG
+        <img
+          src="/logo.svg"
+          alt=""
+          className="size-8 shrink-0 object-contain"
+        />
+        {appName}
       </Link>
       <nav aria-label={t('header.home')} className="flex-1 space-y-1 px-3 py-5">
         {WorkspaceLinks.map(({ to, paths, label, icon: Icon }) => {
