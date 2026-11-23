@@ -34,10 +34,6 @@ const {
 } = api;
 
 const methods = {
-  login: {
-    url: login,
-    method: 'post',
-  },
   logout: {
     url: logout,
     method: 'post',
@@ -92,7 +88,18 @@ const methods = {
   },
 } as const;
 
-const userService = registerServer<keyof typeof methods>(methods, request);
+const userService = {
+  ...registerServer<keyof typeof methods>(methods, request),
+  login: (params: { email: string; password: string }) =>
+    request(login, {
+      method: 'post',
+      data: params,
+      inlineLoginErrors: true,
+      errorHandler: (error: unknown) => {
+        throw error;
+      },
+    }),
+};
 
 export const getLoginChannels = () => request.get(api.loginChannels);
 export const loginWithChannel = (channel: string) =>

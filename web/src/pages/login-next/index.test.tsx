@@ -1,49 +1,58 @@
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest as mockJest,
+} from '@jest/globals';
+import '@testing-library/jest-dom/jest-globals';
 import { useSystemConfig } from '@/hooks/use-system-request';
+import { rsaPsw } from '@/utils';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Login from './index';
 
-jest.mock('@/hooks/use-system-request', () => ({
-  useSystemConfig: jest.fn(),
+const mockLogin =
+  mockJest.fn<(params: { email: string; password: string }) => Promise<number>>();
+const mockNavigate = mockJest.fn<(path: string) => void>();
+let mockSignLoading = false;
+
+mockJest.mock('@/hooks/use-system-request', () => ({
+  useSystemConfig: mockJest.fn(),
 }));
 
-jest.mock('@/hooks/auth-hooks', () => ({
+mockJest.mock('@/hooks/auth-hooks', () => ({
   useAuth: () => ({ isLogin: false }),
 }));
 
-jest.mock('@/hooks/use-login-request', () => ({
-  useLogin: () => ({ login: jest.fn(), loading: false }),
-  useRegister: () => ({ register: jest.fn(), loading: false }),
+mockJest.mock('@/hooks/use-login-request', () => ({
+  useLogin: () => ({ login: mockLogin, loading: mockSignLoading }),
+  useRegister: () => ({ register: mockJest.fn(), loading: false }),
   useLoginChannels: () => ({ channels: [], loading: false }),
-  useLoginWithChannel: () => ({ login: jest.fn(), loading: false }),
+  useLoginWithChannel: () => ({ login: mockJest.fn(), loading: false }),
 }));
 
-jest.mock('react-router', () => ({
-  useNavigate: () => jest.fn(),
+mockJest.mock('react-router', () => ({
+  useNavigate: () => mockNavigate,
 }));
 
-jest.mock('react-i18next', () => ({
+mockJest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-jest.mock('@/utils', () => ({ rsaPsw: jest.fn() }));
-jest.mock('@/components/svg-icon', () => () => null);
-jest.mock('@/components/spotlight', () => () => null);
-jest.mock('./bg', () => ({ BgSvg: () => null }));
-jest.mock('./card', () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => children,
-  FlipFaceContext: jest.requireActual('react').createContext('front'),
-}));
+mockJest.mock('@/utils', () => ({ rsaPsw: mockJest.fn() }));
+mockJest.mock('@/components/svg-icon', () => () => null);
 
-const MockUseSystemConfig = jest.mocked(useSystemConfig);
+const MockUseSystemConfig = mockJest.mocked(useSystemConfig);
 const OriginalResizeObserver = globalThis.ResizeObserver;
 
 beforeAll(() => {
-  globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    disconnect: jest.fn(),
-  }));
+  globalThis.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
 });
 
 afterAll(() => {
@@ -110,5 +119,42 @@ describe('login registration entry', () => {
       screen.queryByTestId('auth-toggle-register'),
     ).not.toBeInTheDocument();
     expect(screen.getByTestId('auth-submit')).toBeEnabled();
+  });
+});
+
+describe('unified login form', () => {
+  beforeEach(() => {
+    mockJest.clearAllMocks();
+    mockSignLoading = false;
+    MockUseSystemConfig.mockReturnValue({
+      config: { registerEnabled: false },
+      loading: false,
+    });
+  });
+  it('keeps the existing encrypted email/password login contract', async () => {
+    mockJest.mocked(rsaPsw).mockReturnValue('encrypted-fixture-password');
+    mockLogin.mockResolvedValue(0);
+    render(<Login />);
+    fireEvent.change(screen.getByTestId('auth-email'), {
+      target: { value: 'operator@example.com' },
+    });
+    fireEvent.change(screen.getByTestId('auth-password'), {
+      target: { value: 'fixture-password' },
+    });
+    fireEvent.click(screen.getByTestId('auth-submit'));
+    await waitFor(() =>
+      expect(mockLogin).toHaveBeenCalledWith({
+        email: 'operator@example.com',
+        password: 'encrypted-fixture-password',
+      }),
+    );
+    expect(rsaPsw).toHaveBeenCalledWith('fixture-password');
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/'));
+    expect(screen.getAllByTestId('auth-form')).toHaveLength(1);
+  });
+  it('disables duplicate submissions while the login request is pending', () => {
+    mockSignLoading = true;
+    render(<Login />);
+    expect(screen.getByTestId('auth-submit')).toBeDisabled();
   });
 });

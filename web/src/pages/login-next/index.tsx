@@ -1,4 +1,5 @@
-import { appName } from '@/conf.json';
+import { HuaqingLoginForm } from '@/components/auth/HuaqingLoginForm';
+import { Eye, EyeOff } from 'lucide-react';
 import SvgIcon from '@/components/svg-icon';
 import { useAuth } from '@/hooks/auth-hooks';
 import {
@@ -9,13 +10,11 @@ import {
 } from '@/hooks/use-login-request';
 import { useSystemConfig } from '@/hooks/use-system-request';
 import { rsaPsw } from '@/utils';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
-import Spotlight from '@/components/spotlight';
 import { Button, ButtonLoading } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -25,21 +24,23 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 import { NICKNAME_PATTERN } from '../user-setting/profile/constants';
-import { BgSvg } from './bg';
-import FlipCard3D, { FlipFaceContext } from './card';
-import './index.less';
+import './hq-auth.css';
+
+type RegistrationValues = { nickname: string; email: string; password: string };
 
 type LoginFormContentProps = {
-  isLoginPage: boolean;
-  title: string;
-  form: UseFormReturn<any>;
+  title: 'login' | 'register';
+  form: UseFormReturn<RegistrationValues>;
   loading: boolean;
-  onCheck: (params: any) => Promise<void>;
+  onCheck: (params: {
+    email: string;
+    password: string;
+    nickname?: string;
+  }) => Promise<void>;
   changeTitle: () => void;
   registerEnabled: boolean;
   channels: { channel: string; icon?: string; display_name: string }[];
@@ -49,7 +50,6 @@ type LoginFormContentProps = {
 };
 
 function LoginFormContent({
-  isLoginPage,
   title,
   form,
   loading,
@@ -61,36 +61,39 @@ function LoginFormContent({
   t,
   disablePasswordLogin,
 }: LoginFormContentProps) {
-  const face = useContext(FlipFaceContext);
-  const isActiveFace = isLoginPage ? face === 'front' : face === 'back';
-
   return (
-    <div className="flex flex-col items-center justify-center w-full">
-      <div className="text-center mb-8">
-        <h2 className="text-xl font-semibold text-text-primary">
-          {title === 'login' ? t('loginTitle') : t('signUpTitle')}
-        </h2>
-      </div>
-      <div className=" w-full max-w-[540px] bg-bg-component backdrop-blur-sm rounded-2xl shadow-xl pt-14 pl-10 pr-10 pb-2 border border-border-button ">
-        {!disablePasswordLogin && (
+    <div>
+      <div className="hq-auth-fields">
+        {!disablePasswordLogin && title === 'login' && (
+          <HuaqingLoginForm
+            onLogin={({ username, password }) =>
+              onCheck({ email: username, password })
+            }
+            busy={loading}
+            eye={<Eye aria-hidden="true" />}
+            eyeOff={<EyeOff aria-hidden="true" />}
+          />
+        )}
+        {!disablePasswordLogin && title !== 'login' && (
           <Form {...form}>
             <form
-              className="flex flex-col gap-8 text-text-primary "
+              className="text-text-primary"
               data-testid="auth-form"
-              data-active={isActiveFace ? 'true' : undefined}
+              data-active="true"
               onSubmit={form.handleSubmit(onCheck)}
             >
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel required>{t('emailLabel')}</FormLabel>
+                  <FormItem className="hq-auth-field">
+                    <FormLabel required>账号</FormLabel>
                     <FormControl>
                       <Input
                         data-testid="auth-email"
-                        placeholder={t('emailPlaceholder')}
-                        autoComplete="email"
+                        placeholder="请输入账号"
+                        autoComplete="username"
+                        type="email"
                         {...field}
                       />
                     </FormControl>
@@ -98,90 +101,54 @@ function LoginFormContent({
                   </FormItem>
                 )}
               />
-              {title === 'register' && (
-                <FormField
-                  control={form.control}
-                  name="nickname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel required>{t('nicknameLabel')}</FormLabel>
-                      <FormControl>
-                        <Input
-                          data-testid="auth-nickname"
-                          placeholder={t('nicknamePlaceholder')}
-                          autoComplete="username"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
               <FormField
                 control={form.control}
-                name="password"
+                name="nickname"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel required>{t('passwordLabel')}</FormLabel>
+                  <FormItem className="hq-auth-field">
+                    <FormLabel required>{t('nicknameLabel')}</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <Input
-                          data-testid="auth-password"
-                          type={'password'}
-                          placeholder={t('passwordPlaceholder')}
-                          autoComplete={
-                            title === 'login'
-                              ? 'current-password'
-                              : 'new-password'
-                          }
-                          {...field}
-                        />
-                      </div>
+                      <Input
+                        data-testid="auth-nickname"
+                        placeholder={t('nicknamePlaceholder')}
+                        autoComplete="username"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {title === 'login' && (
-                <FormField
-                  control={form.control}
-                  name="remember"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex gap-2 group">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={(checked) => {
-                              field.onChange(checked);
-                            }}
-                            className="group-hover:border-border-default group-hover:bg-border-button"
-                          />
-                        </FormControl>
-                        <FormLabel
-                          className={cn('cursor-pointer', {
-                            'text-text-disabled': !field.value,
-                            'text-text-primary': field.value,
-                          })}
-                        >
-                          {t('rememberMe')}
-                        </FormLabel>
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="hq-auth-field">
+                    <FormLabel required>{t('passwordLabel')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        data-testid="auth-password"
+                        type="password"
+                        rootClassName="hq-auth-password"
+                        placeholder="请输入密码"
+                        autoComplete={'new-password'}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <ButtonLoading
                 data-testid="auth-submit"
                 type="submit"
                 loading={loading}
-                className="bg-metallic-gradient border-b-[#00BEB4] border-b-2 hover:bg-metallic-gradient hover:border-b-[#02bcdd] w-full my-8"
+                disabled={loading}
+                className="hq-auth-submit"
               >
-                {title === 'login' ? t('login') : t('continue')}
+                {loading ? '正在登录…' : t('continue')}
               </ButtonLoading>
             </form>
           </Form>
@@ -247,24 +214,19 @@ function LoginFormContent({
 }
 
 const Login = () => {
-  const [title, setTitle] = useState('login');
+  const [title, setTitle] = useState<'login' | 'register'>('login');
   const navigate = useNavigate();
   const { login, loading: signLoading } = useLogin();
   const { register, loading: registerLoading } = useRegister();
-  const { channels, loading: channelsLoading } = useLoginChannels();
+  const { channels } = useLoginChannels();
   const { login: loginWithChannel, loading: loginWithChannelLoading } =
     useLoginWithChannel();
   const { t } = useTranslation('translation', { keyPrefix: 'login' });
   const { t: tSetting } = useTranslation('translation', {
     keyPrefix: 'setting',
   });
-  const [isLoginPage, setIsLoginPage] = useState(true);
 
-  const loading =
-    signLoading ||
-    registerLoading ||
-    channelsLoading ||
-    loginWithChannelLoading;
+  const loading = signLoading || registerLoading || loginWithChannelLoading;
   const { config } = useSystemConfig();
   const registerEnabled =
     config?.registerEnabled === 1 || config?.registerEnabled === true;
@@ -281,28 +243,20 @@ const Login = () => {
   };
 
   const changeTitle = () => {
-    setIsLoginPage(title !== 'login');
-    if (title === 'login' && !registerEnabled) {
-      return;
-    }
-
-    setTimeout(() => {
-      setTitle(title === 'login' ? 'register' : 'login');
-    }, 200);
+    if (title === 'login' && !registerEnabled) return;
+    setTitle(title === 'login' ? 'register' : 'login');
   };
 
   const FormSchema = z
     .object({
-      nickname: z.string().optional(),
+      nickname: z.string(),
       email: z
         .string()
         .email()
         .min(1, { message: t('emailPlaceholder') }),
       password: z.string().min(1, { message: t('passwordPlaceholder') }),
-      remember: z.boolean().optional(),
     })
     .superRefine((data, ctx) => {
-      if (title !== 'register') return;
       if (!data.nickname) {
         ctx.addIssue({
           path: ['nickname'],
@@ -325,12 +279,15 @@ const Login = () => {
       nickname: '',
       email: '',
       password: '',
-      remember: false,
     },
     resolver: zodResolver(FormSchema),
   });
 
-  const onCheck = async (params: FormValues) => {
+  const onCheck = async (params: {
+    email: string;
+    password: string;
+    nickname?: string;
+  }) => {
     try {
       const rsaPassWord = rsaPsw(params.password) as string;
 
@@ -341,10 +298,12 @@ const Login = () => {
         });
         if (code === 0) {
           navigate('/');
+        } else {
+          throw new Error('账号或密码不正确');
         }
       } else {
         const code = await register({
-          nickname: params.nickname,
+          nickname: params.nickname ?? '',
           email: params.email,
           password: rsaPassWord,
         });
@@ -353,48 +312,22 @@ const Login = () => {
         }
       }
     } catch (errorInfo) {
+      if (title === 'login') throw errorInfo;
       console.log('Failed:', errorInfo);
     }
   };
 
   return (
-    <>
-      <Spotlight opcity={0.4} coverage={60} color={'rgb(128, 255, 248)'} />
-      <Spotlight
-        opcity={0.3}
-        coverage={12}
-        X={'10%'}
-        Y={'-10%'}
-        color={'rgb(128, 255, 248)'}
-      />
-      <Spotlight
-        opcity={0.3}
-        coverage={12}
-        X={'90%'}
-        Y={'-10%'}
-        color={'rgb(128, 255, 248)'}
-      />
-      <div className=" h-[inherit] relative overflow-auto">
-        <BgSvg isPaused />
-
-        <div className="z-20 absolute top-3 flex flex-col items-center mb-12 w-full text-text-primary">
-          <div className="flex items-center mb-4 w-full pl-10 pt-10 ">
-            <div className="w-12 h-12 p-2 rounded-lg flex items-center justify-center mr-3">
-              <img
-                src={'/logo.svg'}
-                alt="logo"
-                className="size-8 mr-[12] cursor-pointer"
-              />
-            </div>
-            <div className="text-xl font-bold self-center">{appName}</div>
-          </div>
-          <h1 className="text-page-title  text-center mb-2">{t('title')}</h1>
-        </div>
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-[1050px] px-4 sm:px-6 lg:px-8">
-          {/* Login Form */}
-          <FlipCard3D isLoginPage={isLoginPage}>
+    <main className="hq-auth">
+      <div className="hq-auth-layout">
+        <header className="hq-auth-heading">
+          <img src="/logo.svg" alt="" width="26" height="22" />
+          <span>华清智言 · Huaqing Knowledge</span>
+        </header>
+        <section className="hq-auth-card" aria-labelledby="hq-auth-title">
+          <h1 id="hq-auth-title">{title === 'login' ? '登录' : '注册'}</h1>
+          <div data-testid="auth-card-active">
             <LoginFormContent
-              isLoginPage={isLoginPage}
               title={title}
               form={form}
               loading={loading}
@@ -406,10 +339,10 @@ const Login = () => {
               t={t}
               disablePasswordLogin={!!config?.disablePasswordLogin}
             />
-          </FlipCard3D>
-        </div>
+          </div>
+        </section>
       </div>
-    </>
+    </main>
   );
 };
 

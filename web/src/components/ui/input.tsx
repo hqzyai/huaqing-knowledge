@@ -129,6 +129,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {isPasswordInput && (
             <button
               type="button"
+              aria-label={showPassword ? '隐藏密码' : '显示密码'}
+              aria-pressed={showPassword}
               className="
                 p-2 text-text-secondary
                 absolute border-0 end-1 top-[50%] translate-y-[-50%]

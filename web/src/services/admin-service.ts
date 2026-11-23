@@ -15,7 +15,7 @@
  */
 
 import { history } from '@/utils/simple-history-util';
-import axios from 'axios';
+import axios, { type AxiosRequestConfig } from 'axios';
 
 import message from '@/components/ui/message';
 import { Authorization } from '@/constants/authorization';
@@ -48,6 +48,8 @@ request.interceptors.request.use((config) => {
 
 request.interceptors.response.use(
   (response) => {
+    if ((response.config as { inlineLoginErrors?: boolean }).inlineLoginErrors)
+      return response;
     if (response.config.responseType === 'blob') {
       return response;
     }
@@ -73,6 +75,7 @@ request.interceptors.response.use(
     return response;
   },
   (error) => {
+    if (error.config?.inlineLoginErrors) return Promise.reject(error);
     const { response } = error;
     const { data } = response ?? {};
 
@@ -165,7 +168,9 @@ type ResponseData<D = NonNullable<unknown>> = {
 };
 
 export const login = (params: { email: string; password: string }) =>
-  request.post<ResponseData<AdminService.LoginData>>(adminLogin, params);
+  request.post<ResponseData<AdminService.LoginData>>(adminLogin, params, {
+    inlineLoginErrors: true,
+  } as AxiosRequestConfig & { inlineLoginErrors: boolean });
 export const logout = () => request.post<ResponseData<boolean>>(adminLogout);
 export const listUsers = () =>
   request.get<ResponseData<AdminService.ListUsersItem[]>>(adminListUsers, {});

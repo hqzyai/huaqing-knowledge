@@ -1,47 +1,27 @@
-import { appName } from '@/conf.json';
+import { HuaqingLoginForm } from '@/components/auth/HuaqingLoginForm';
+import { Eye, EyeOff } from 'lucide-react';
 import { type AxiosResponseHeaders } from 'axios';
-import { useContext, useEffect, useId } from 'react';
-import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 import { useMutation } from '@tanstack/react-query';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-
-import Spotlight from '@/components/spotlight';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Authorization } from '@/constants/authorization';
 
 import { useAuth } from '@/hooks/auth-hooks';
-import { cn } from '@/lib/utils';
 import { Routes } from '@/routes';
 import { rsaPsw } from '@/utils';
 import authorizationUtil from '@/utils/authorization-util';
 
 import { login } from '@/services/admin-service';
 
-import { BgSvg } from '../login-next/bg';
+import '../login-next/hq-auth.css';
 
 import { CurrentUserInfoContext } from './layouts/root-layout';
 
 function AdminLogin() {
   const navigate = useNavigate();
   const [, setCurrentUserInfo] = useContext(CurrentUserInfoContext);
-  const { t } = useTranslation('translation', { keyPrefix: 'login' });
   const { isLogin } = useAuth();
 
   const loginMutation = useMutation({
@@ -78,6 +58,8 @@ function AdminLogin() {
         });
 
         navigate('/admin/services');
+      } else {
+        throw new Error('账号或密码不正确');
       }
     },
     onError: (error) => {
@@ -94,163 +76,27 @@ function AdminLogin() {
     }
   }, [isLogin, navigate]);
 
-  const FormSchema = z.object({
-    email: z
-      .string()
-      .email()
-      .min(1, { message: t('emailPlaceholder') }),
-    password: z.string().min(1, { message: t('passwordPlaceholder') }),
-    remember: z.boolean().optional(),
-  });
-
-  const formId = useId();
-  const form = useForm({
-    defaultValues: {
-      email: '',
-      password: '',
-      remember: false,
-    },
-    resolver: zodResolver(FormSchema),
-  });
-
   return (
-    <ScrollArea className="w-screen h-screen">
-      <div className="relative h-max min-h-[100vh]">
-        <Spotlight opcity={0.4} coverage={60} color="rgb(128, 255, 248)" />
-        <Spotlight
-          opcity={0.3}
-          coverage={12}
-          X="10%"
-          Y="-10%"
-          color="rgb(128, 255, 248)"
-        />
-        <Spotlight
-          opcity={0.3}
-          coverage={12}
-          X="90%"
-          Y="-10%"
-          color="rgb(128, 255, 248)"
-        />
-
-        <BgSvg isPaused={true} />
-
-        <div className="absolute top-3 left-0 w-full">
-          <div className="absolute mt-12 ml-12 flex items-center">
-            <img
-              className="size-8 mr-5 object-contain"
-              src="/logo.svg"
-              alt={`${appName} logo`}
-            />
-            <span className="text-xl font-bold">{appName}</span>
-          </div>
-
-          <h1 className="mt-[6.5rem] text-page-title text-center mb-12">
-            {t('loginTitle', { keyPrefix: 'admin' })}
-          </h1>
-        </div>
-
-        <div className="flex items-center justify-center w-screen">
-          <div className="w-full max-w-[540px] mt-72 mb-48">
-            <Card className="w-full bg-bg-component rounded-2xl shadow-none backdrop-blur-sm">
-              <CardContent className="px-10 pt-14 pb-10">
-                <Form {...form}>
-                  <form
-                    id={formId}
-                    className="space-y-8 text-text-primary"
-                    onSubmit={form.handleSubmit((data) =>
-                      loginMutation.mutate(data),
-                    )}
-                  >
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel required>{t('emailLabel')}</FormLabel>
-
-                          <FormControl>
-                            <Input
-                              className="h-10"
-                              placeholder={t('emailPlaceholder')}
-                              autoComplete="email"
-                              {...field}
-                            />
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel required>{t('passwordLabel')}</FormLabel>
-
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className="h-10"
-                              type="password"
-                              placeholder={t('passwordPlaceholder')}
-                              autoComplete="password"
-                            />
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="remember"
-                      render={({ field }) => (
-                        <FormItem className="!mt-5">
-                          <FormLabel
-                            className={cn(
-                              'transition-colors',
-                              field.value
-                                ? 'text-text-primary'
-                                : 'text-text-secondary',
-                            )}
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-
-                            <span className="ml-2">{t('rememberMe')}</span>
-                          </FormLabel>
-                        </FormItem>
-                      )}
-                    />
-                  </form>
-                </Form>
-              </CardContent>
-
-              <CardFooter className="px-10 pt-8 pb-14">
-                <Button
-                  form={formId}
-                  variant="highlighted"
-                  size="lg"
-                  block
-                  type="submit"
-                  className="font-medium"
-                  loading={loading}
-                >
-                  {t('login')}
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
-        </div>
+    <main className="hq-auth">
+      <div className="hq-auth-layout">
+        <header className="hq-auth-heading">
+          <img src="/logo.svg" alt="" width="26" height="22" />
+          <span>华清智言 · Huaqing Knowledge</span>
+        </header>
+        <section className="hq-auth-card" aria-labelledby="hq-admin-title">
+          <h1 id="hq-admin-title">登录</h1>
+          <p className="hq-auth-description">使用管理员账号登录管理控制台。</p>
+          <HuaqingLoginForm
+            onLogin={({ username, password }) =>
+              loginMutation.mutateAsync({ email: username, password })
+            }
+            busy={loading}
+            eye={<Eye aria-hidden="true" />}
+            eyeOff={<EyeOff aria-hidden="true" />}
+          />
+        </section>
       </div>
-    </ScrollArea>
+    </main>
   );
 }
 
