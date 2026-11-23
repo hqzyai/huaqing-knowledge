@@ -1,3 +1,5 @@
+FROM caddy:2.11.9@sha256:0c2243efcf437ab7f7a978f1027fcf0d4f9be8a75df27b1b3fbc5dbe0ffa8cf0 AS caddy
+
 FROM opencloudos/opencloudos:9.0
 USER root
 
@@ -22,7 +24,8 @@ ENV PATH $CONDA_PREFIX/bin:$PATH
 # RUN curl -sL https://rpm.nodesource.com/setup_14.x | bash -
 RUN dnf install -y nodejs
 
-RUN dnf install -y nginx
+COPY --from=caddy /usr/bin/caddy /usr/local/bin/caddy
+COPY docker/caddy/ /etc/caddy/
 
 ADD ./web ./web
 ADD ./api ./api

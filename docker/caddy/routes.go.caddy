@@ -1,0 +1,9 @@
+@admin path_regexp ^/api/v1/admin
+reverse_proxy @admin 127.0.0.1:9383 {
+	import proxy.caddy
+}
+
+@api path_regexp ^/(v1|api)
+reverse_proxy @api 127.0.0.1:9384 {
+	import proxy.caddy
+}

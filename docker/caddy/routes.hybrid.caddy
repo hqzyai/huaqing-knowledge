@@ -1,0 +1,19 @@
+@pythonAdmin path_regexp ^/api/v1/admin/(roles|sandbox|whitelist|variables)
+reverse_proxy @pythonAdmin 127.0.0.1:9381 {
+	import proxy.caddy
+}
+
+@goAdmin path_regexp ^/api/v1/admin
+reverse_proxy @goAdmin 127.0.0.1:9383 {
+	import proxy.caddy
+}
+
+@goAPI path_regexp ^(/api/v1/(skills|chat/completions)|/v1/(system/config|user/(login|logout)))
+reverse_proxy @goAPI 127.0.0.1:9384 {
+	import proxy.caddy
+}
+
+@api path_regexp ^/(v1|api)
+reverse_proxy @api 127.0.0.1:9380 {
+	import proxy.caddy
+}
