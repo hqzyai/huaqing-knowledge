@@ -128,7 +128,7 @@ the `ragflow_deps/download_deps.py` snapshot.
 ### Maximum file size
 
 - `MAX_CONTENT_LENGTH`
-  The maximum file size for each uploaded file, in bytes. You can uncomment this line if you wish to change the 128M file size limit. After making the change, ensure you update `client_max_body_size` in nginx/nginx.conf correspondingly.
+  The maximum file size for each uploaded file, in bytes. The Caddy gateway also limits the full request body to 1 GiB in `caddy/common.caddy`. Update both limits if you need to accept larger uploads.
 
 ### Doc bulk size
 
@@ -298,31 +298,19 @@ If you want your instance to be available under `https`, follow these steps:
    - Certificate: `/etc/letsencrypt/live/your-ragflow-domain.com/fullchain.pem`
    - Private key: `/etc/letsencrypt/live/your-ragflow-domain.com/privkey.pem`
 
-3. **Update docker-compose.yml**
-   Add the certificate volumes to the `ragflow` service in your `docker-compose.yml`:
+3. **Mount the Caddy HTTPS configuration and certificate files**
    ```yaml
    services:
-     ragflow:
-       # ...existing configuration...
+     ragflow-cpu:
+       environment:
+         RAGFLOW_TLS_DOMAIN: your-ragflow-domain.com
        volumes:
-         # SSL certificates
-         - /etc/letsencrypt/live/your-ragflow-domain.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
-         - /etc/letsencrypt/live/your-ragflow-domain.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
-         # Switch to HTTPS nginx configuration
-         - ./nginx/ragflow.https.conf:/etc/nginx/conf.d/ragflow.conf
-         # ...other existing volumes...
-
+         - ./caddy/Caddyfile.https.example:/etc/caddy/Caddyfile:ro
+         - /etc/letsencrypt/live/your-ragflow-domain.com/fullchain.pem:/etc/caddy/ssl/fullchain.pem:ro
+         - /etc/letsencrypt/live/your-ragflow-domain.com/privkey.pem:/etc/caddy/ssl/privkey.pem:ro
    ```
 
-4. **Update nginx configuration**
-   Edit `nginx/ragflow.https.conf` and replace `my_ragflow_domain.com` with your actual domain name.
-
-5. **Restart the services**
-   ```bash
-   docker-compose down
-   docker-compose up -d
-   ```
-
+4. **Recreate the application container** with `docker compose up -d --force-recreate ragflow-cpu`.
 
 > [!IMPORTANT]
 > - Ensure your domain's DNS A record points to your server's IP address
@@ -338,4 +326,4 @@ If you already have SSL certificates from another provider:
 1. Place your certificates in a directory accessible to Docker
 2. Update the volume paths in `docker-compose.yml` to point to your certificate files
 3. Ensure the certificate file contains the full certificate chain
-4. Follow steps 4-5 from the Let's Encrypt guide above
+4. Recreate the application container as shown above

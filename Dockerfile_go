@@ -1,3 +1,5 @@
+FROM caddy:2.11.9@sha256:0c2243efcf437ab7f7a978f1027fcf0d4f9be8a75df27b1b3fbc5dbe0ffa8cf0 AS caddy
+
 # base stage
 FROM ubuntu:24.04 AS base
 USER root
@@ -94,20 +96,6 @@ RUN --mount=type=cache,id=ragflow_apt,target=/var/cache/apt,sharing=locked \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
-ARG NGINX_VERSION=1.31.3-1~noble
-RUN --mount=type=cache,id=ragflow_apt,target=/var/cache/apt,sharing=locked \
-    apt -o Acquire::Retries=5 update && \
-    apt -o Acquire::Retries=5 install -y --no-install-recommends gnupg && \
-    mkdir -p /etc/apt/keyrings && \
-    curl --retry 5 --retry-delay 2 --retry-all-errors -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /etc/apt/keyrings/nginx-archive-keyring.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/mainline/ubuntu/ noble nginx" > /etc/apt/sources.list.d/nginx.list && \
-    apt -o Acquire::Retries=5 update && \
-    apt -o Acquire::Retries=5 install -y --no-install-recommends nginx=${NGINX_VERSION} && \
-    apt-mark hold nginx && \
-    apt-get purge -y gnupg && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
-
 
 # ── web-builder stage ──
 
@@ -199,14 +187,8 @@ ENV PYTHONPATH=/ragflow/
 COPY docker/service_conf.yaml.template ./conf/service_conf.yaml.template
 COPY --chmod=755 docker/entrypoint*.sh ./
 
-# Copy nginx configuration for frontend serving
-RUN mkdir -p /etc/nginx/conf.d /var/log/nginx
-
-COPY docker/nginx/nginx.conf docker/nginx/proxy.conf /etc/nginx/
-COPY docker/nginx/ragflow.conf.golang \
-     /etc/nginx/conf.d/
-
-RUN rm -f /etc/nginx/sites-enabled/default
+COPY --from=caddy /usr/bin/caddy /usr/local/bin/caddy
+COPY docker/caddy/ /etc/caddy/
 
 
 COPY conf conf

@@ -11,7 +11,7 @@ cat /ragflow/VERSION
 function usage() {
     echo "Usage: $0 [OPTIONS]"
     echo
-    echo "  --disable-webserver                     Disables the web server (nginx + ragflow_server)."
+    echo "  --disable-webserver                     Disables the web server (Caddy + ragflow_server)."
     echo "  --disable-taskexecutor                  Disables task executor workers."
     echo "  --disable-datasync                      Disables synchronization of datasource workers."
     echo "  --enable-mcpserver                      Enables the MCP server."
@@ -195,26 +195,7 @@ done < "${TEMPLATE_FILE}"
 export LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu/"
 PY=python3
 
-# -----------------------------------------------------------------------------
-# Select Nginx Configuration based on API_PROXY_SCHEME
-# -----------------------------------------------------------------------------
-NGINX_CONF_DIR="/etc/nginx/conf.d"
-if [ -n "$API_PROXY_SCHEME" ]; then
-    if [[ "${API_PROXY_SCHEME}" == "hybrid" ]]; then
-        cp -f "$NGINX_CONF_DIR/ragflow.conf.hybrid" "$NGINX_CONF_DIR/ragflow.conf"
-        echo "Applied nginx config: ragflow.conf.hybrid"
-    elif [[ "${API_PROXY_SCHEME}" == "go" ]]; then
-        cp -f "$NGINX_CONF_DIR/ragflow.conf.golang" "$NGINX_CONF_DIR/ragflow.conf"
-        echo "Applied nginx config: ragflow.conf.golang (default)"
-    else
-        cp -f "$NGINX_CONF_DIR/ragflow.conf.python" "$NGINX_CONF_DIR/ragflow.conf"
-        echo "Applied nginx config: ragflow.conf.python"
-    fi
-else
-    # Default to python backend
-    cp -f "$NGINX_CONF_DIR/ragflow.conf.python" "$NGINX_CONF_DIR/ragflow.conf"
-    echo "Default: applied nginx config: ragflow.conf.python"
-fi
+export API_PROXY_SCHEME="${API_PROXY_SCHEME:-go}"
 
 # -----------------------------------------------------------------------------
 # Function(s)
@@ -314,8 +295,8 @@ if [[ "${ENABLE_ADMIN_SERVER}" -eq 1 ]]; then
 fi
 
 if [[ "${ENABLE_WEBSERVER}" -eq 1 ]]; then
-    echo "Starting nginx..."
-    /usr/sbin/nginx -c /etc/nginx/nginx.conf
+    caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+    run_with_restart "Caddy" caddy run --config /etc/caddy/Caddyfile --adapter caddyfile &
 
    if [[ "${API_PROXY_SCHEME}" == "hybrid" ]] || [[ "${API_PROXY_SCHEME}" == "python" ]]; then
         echo "Attempt to start RAGFlow python server..."

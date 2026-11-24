@@ -1,0 +1,41 @@
+root * /ragflow/web/dist
+
+log
+
+@legacyAssets path_regexp ^/static/(css|js|media)/
+log_skip @legacyAssets
+
+@compress not header_regexp User-Agent "MSIE [1-6][.]"
+encode @compress {
+	gzip 9
+	minimum_length 1024
+	match {
+		header Content-Type text/html*
+		header Content-Type text/plain*
+		header Content-Type application/javascript*
+		header Content-Type application/x-javascript*
+		header Content-Type text/css*
+		header Content-Type application/xml*
+		header Content-Type text/javascript*
+		header Content-Type application/x-httpd-php*
+		header Content-Type image/jpeg*
+		header Content-Type image/gif*
+		header Content-Type image/png*
+	}
+}
+
+request_body {
+	max_size 1073741824
+}
+
+route {
+	import routes.{$API_PROXY_SCHEME:python}.caddy
+
+	header @legacyAssets Cache-Control "max-age=315360000" {
+		match status 200 201 204 206 301 302 303 304 307 308
+	}
+	file_server @legacyAssets
+
+	try_files {path} {path}/ /index.html
+	file_server
+}
