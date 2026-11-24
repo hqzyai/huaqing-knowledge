@@ -52,14 +52,15 @@ export function WorkspaceSidebar() {
     <aside className="hidden min-h-0 flex-col border-r border-border-button bg-bg-card lg:flex">
       <Link
         to={Routes.Root}
-        className="flex h-20 items-center gap-2 px-4 text-sm font-semibold text-text-primary"
+        className="flex h-20 min-w-0 items-center gap-3 px-4 text-sm font-semibold leading-5 text-text-primary"
+        title={appName}
       >
         <img
           src="/logo.svg"
           alt=""
-          className="size-8 shrink-0 object-contain"
+          className="size-7 shrink-0 object-contain"
         />
-        {appName}
+        <span className="truncate">{appName}</span>
       </Link>
       <nav aria-label={t('header.home')} className="flex-1 space-y-1 px-3 py-5">
         {WorkspaceLinks.map(({ to, paths, label, icon: Icon }) => {

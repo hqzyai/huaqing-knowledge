@@ -253,13 +253,13 @@ export function MobileNavbar({ renderFooter }: MobileNavbarProps) {
         className="flex w-[min(85vw,18rem)] flex-col gap-0 p-0 sm:w-72"
       >
         <div className="flex shrink-0 justify-center py-5">
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-3 px-4" title={appName}>
             <img
               src="/logo.svg"
-              alt={`${appName} logo`}
-              className="size-9 object-contain"
+              alt=""
+              className="size-7 shrink-0 object-contain"
             />
-            <span className="text-base font-semibold text-text-primary">
+            <span className="truncate text-sm font-semibold leading-5 text-text-primary">
               {appName}
             </span>
           </div>

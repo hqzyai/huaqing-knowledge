@@ -1,4 +1,5 @@
 import { RAGFlowAvatar } from '@/components/ragflow-avatar';
+import { appName } from '@/conf.json';
 import {
   useFetchUserInfo,
   useListTenant,
@@ -35,10 +36,18 @@ export function Header({
       {...props}
     >
       <div className="flex min-w-0 items-center gap-2">
-        <div className="lg:hidden">
+        <div className="shrink-0 lg:hidden">
           <MobileNavbar renderFooter={renderMobileFooter} />
         </div>
-        <span className="truncate text-sm font-medium text-text-secondary">
+        <Link
+          to={Routes.Root}
+          title={appName}
+          className="flex min-w-0 items-center gap-3 text-sm font-semibold leading-5 text-text-primary lg:hidden"
+        >
+          <img src="/logo.svg" alt="" className="size-7 shrink-0 object-contain" />
+          <span className="truncate">{appName}</span>
+        </Link>
+        <span className="hidden truncate text-sm font-medium text-text-secondary lg:inline">
           {t('workspace.title')}
         </span>
       </div>
